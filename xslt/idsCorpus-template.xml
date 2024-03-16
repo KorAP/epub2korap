@@ -8,9 +8,7 @@
         <c.title>Deutsche Nationalbibliothek: Belletristik</c.title>
       </titleStmt>
       <publicationStmt>
-        <distributor>		Institut für Deutsche Sprache		</distributor>
-        <pubAddress>		Postfach 10 16 21, D-68016 Mannheim	</pubAddress>
-        <telephone>		+49 (0)621 1581 0			</telephone>
+        <distributor>Deutsche Nationalbibliothek</distributor>
         <availability region="world" status="unknown">QAO-NC</availability>
         <pubDate/>
       </publicationStmt>
