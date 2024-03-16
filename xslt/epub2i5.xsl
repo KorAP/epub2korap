@@ -69,6 +69,8 @@
         </xsl:choose>
     </xsl:variable>
 
+    <xsl:variable name="texttype" select="replace($dnbBookdata//dc:subject[matches(., '^[A-Z] ')], '^[A-Z] (.*)', '$1')"/>
+
     <xsl:variable name="verlag">
         <xsl:choose>
             <xsl:when test="contains($dnbBookdata//dc:publisher,':')">
@@ -291,8 +293,8 @@
                         </creation>
                         <textClass/>
                         <textDesc>
-                            <textType>Jugendliteratur</textType>
-                            <textTypeRef>Jugendliteratur</textTypeRef>
+                            <textType><xsl:value-of select="$texttype"/></textType>
+                            <textTypeRef><xsl:value-of select="$texttype"/></textTypeRef>
                             <textDomain/>
                         </textDesc>
                     </profileDesc>
