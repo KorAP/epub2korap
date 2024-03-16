@@ -17,7 +17,7 @@ $(TARGET_DIR)/dnb.i5.xml: $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(
 	cat $^ >> $@
 	tail -n 1 xslt/idsCorpus-template.xml  >> $@
 
-test: $(TARGET_DIR)/dnb.i5.xml xslt/epub2i5.xsl
+test: $(TARGET_DIR)/dnb.i5.xml
 	xmllint --noout --valid $<
 
 $(BUILD_DIR)/%: $(SRC_DIR)/%.epub
@@ -25,7 +25,7 @@ $(BUILD_DIR)/%: $(SRC_DIR)/%.epub
 	echo "Converting $< to $@"
 	unzip -q -o $< -d $@
 
-$(TARGET_DIR)/%.i5.xml: $(BUILD_DIR)/% xslt/epub2i5.xsl
+$(TARGET_DIR)/%.i5.xml: $(BUILD_DIR)/% xslt/epub2i5.xsl xslt/idsCorpus-template.xml
 	mkdir -p $(TARGET_DIR)
 	echo "Converting $< to $@"
 	java -jar lib/saxon9ee.jar -xsl:xslt/epub2i5.xsl $</*/content.opf > $@
