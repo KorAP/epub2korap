@@ -4,7 +4,7 @@ TARGET_DIR ?= target
 
 .PHONY: all clean test krill
 
-.PRECIOUS: $(TARGET_DIR)/%.zip $(TARGET_DIR)/%.i5.xml $(TARGET_DIR)/%.tar
+.PRECIOUS: %.zip $(TARGET_DIR)/%.zip $(TARGET_DIR)/%.i5.xml $(TARGET_DIR)/%.tar
 
 all: $(TARGET_DIR)/dnb.i5.xml
 
