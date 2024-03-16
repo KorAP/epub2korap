@@ -36,6 +36,8 @@ build-and-test-i5:
 
 build-krill:
   image: perl:5.38
+  services:
+    - docker:dind
   stage: build
   rules:
     - if: $CI_COMMIT_TAG =~ /.+/
@@ -67,8 +69,12 @@ build-krill:
     - start_section install_linux_packages "Installing missing Linux packages"
     - mkdir -pv $APT_CACHE_DIR
     - apt-get -o dir::cache::archives="$APT_CACHE_DIR" update
-    - apt-get -o dir::cache::archives="$APT_CACHE_DIR" install -y rsync pv jq curl openjdk-17-jre-headless
+    - apt-get -o dir::cache::archives="$APT_CACHE_DIR" install -y rsync pv jq curl openjdk-17-jre-headless docker.io
     - end_section install_linux_packages
+
+    - start_section install_tree_tagger "Installing TreeTagger"
+    - curl -Ls 'https://gitlab.ids-mannheim.de/KorAP/CoNLL-U-Treetagger/-/jobs/artifacts/master/raw/conllu2treetagger.xz?job=build-docker-image' | docker load
+    - end_section install_tree_tagger
 
     - start_section install_perl_packages "Installing missing Perl packages"
     - curl -L https://cpanmin.us | perl - App::cpanminus
@@ -80,14 +86,15 @@ build-krill:
   script:
     - export PATH=$PERL_LOCAL_LIB_ROOT/bin:$PATH
     - start_section building_krill "Building Krill"
-    - touch *.i5.xml *.zip *.krill.tar # ignore timestamps in make
+    - touch target/*.i5.xml target/*.zip target/*.krill.tar # ignore timestamps in make
+    - make -j $(nproc) target/dnb.tree_tagger.zip
     - make -j $(nproc) krill
     - ls -l target/*.krill.tar
     - end_section building_krill
   artifacts:
     paths:
-      - "target/*.krill.tar"
-      - "target/*.zip"
+      - target/*.krill.tar
+      - target/*.zip
 
 deploy:
   stage: deploy
