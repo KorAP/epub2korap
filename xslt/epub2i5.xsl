@@ -336,26 +336,25 @@
         </head>
     </xsl:template>
 
+    <xsl:template match="xhtml:em">
+        <emph>
+            <xsl:apply-templates/>
+        </emph>
+    </xsl:template>
 
-    <xsl:template match="xhtml:span[@class='italic']">
-        <hi rend="italic">
+    <xsl:template match="xhtml:span[matches(@class, '(bold|italic|big| )+')]">
+        <hi rend="{@class}">
             <xsl:apply-templates/>
         </hi>
     </xsl:template>
 
-    <xsl:template match="xhtml:span[@class='bold']">
-        <hi rend="bold">
-            <xsl:apply-templates/>
-        </hi>
-    </xsl:template>
-
-    <xsl:template match="xhtml:span[@class='sub']">
+    <xsl:template match="xhtml:sub|xhtml:span[@class='sub']">
         <hi rend="sub">
             <xsl:apply-templates/>
         </hi>
     </xsl:template>
 
-    <xsl:template match="xhtml:span[@class='sup']">
+    <xsl:template match="xhtml:sup|xhtml:span[@class='sup']">
         <hi rend="sup">
             <xsl:apply-templates/>
         </hi>
@@ -376,6 +375,14 @@
     <xsl:template match="xhtml:img">
         <!-- <gap reason="image"/>  -->
     </xsl:template>
+
+    <xsl:template match="xhtml:a">
+        <ref target="{@href}">
+            <xsl:apply-templates />
+        </ref>
+    </xsl:template>
+
+    <xsl:template match="xhtml:br"/>
 
     <xsl:template match="xhtml:*">
         <xsl:message>
