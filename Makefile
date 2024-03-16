@@ -4,7 +4,7 @@ TARGET_DIR ?= target
 
 .PHONY: all clean test krill
 
-.PRECIOUS: %.zip $(TARGET_DIR)/%.zip $(TARGET_DIR)/%.i5.xml $(TARGET_DIR)/%.tar
+.PRECIOUS: %.zip %.tree_tagger.zip %.ud.zip %.spacy.zip %.i5.xml %.tar
 
 all: $(TARGET_DIR)/dnb.i5.xml
 
@@ -45,16 +45,14 @@ $(TARGET_DIR)/%.i5.xml: $(BUILD_DIR)/% xslt/epub2i5.xsl xslt/idsCorpus-template.
 %.cmc.zip: %.zip
 	$(KORAPXML2CONLLU) $< | pv | conllu2cmc -s | conllu2korapxml > $@
 
-%.krill.tar: %.zip
+%.krill.tar: %.zip %.ud.zip %.tree_tagger.zip
 	mkdir -p $(basename $@)
-	korapxml2krill archive --quiet -w -z -cfg krill-korap4dnb.cfg --non-word-tokens --meta I5 -i $< -o $(basename $@)
-# add annotations later
-# korapxml2krill archive --quiet -w -z -cfg krill-korap4dnb.cfg --non-word-tokens --meta I5 -i $< -i $(word 2,$^) -i $(word 3,$^) -o $(basename $@)
+	korapxml2krill archive --quiet -w -z -cfg krill-korap4dnb.cfg --non-word-tokens --meta I5 -i $< -i $(word 2,$^) -i $(word 3,$^) -o $(basename $@)
 
-json: *.krill.tar
-	rm -rf json
-	mkdir -p json
-	for f in $^; do tar -C json -xf $$f; done
+%.json: %.krill.tar
+	rm -rf $@
+	mkdir -p $@
+	for f in $<; do tar -C $@ -xf $$f; done
 
 clean:
 	rm -rf $(BUILD_DIR) $(TARGET_DIR)

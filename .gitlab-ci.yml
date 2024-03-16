@@ -88,6 +88,7 @@ build-krill:
     - start_section building_krill "Building Krill"
     - touch target/*.i5.xml target/*.zip target/*.krill.tar # ignore timestamps in make
     - make -j $(nproc) target/dnb.tree_tagger.zip
+    - make -j $(nproc) target/dnb.ud.zip
     - make -j $(nproc) krill
     - ls -l target/*.krill.tar
     - end_section building_krill
