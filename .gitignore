@@ -1,0 +1,13 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+cache/
+build/
+target/
+*.log
+*_files/
+*.bak
+json/
+.gitlab-ci-local/
+\#*
