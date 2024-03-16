@@ -24,7 +24,7 @@
     <xsl:variable name="autor"
         select="string-join(replace($dnbBookdata//dc:creator, ' *\[[^\]]*\]', ''), ' ; ')"/>
 
-    <xsl:variable name="straight_autor" select="replace(hlu:reversedAuthors($autor), ',', '')"/>
+    <xsl:variable name="straight_autor" select="normalize-space(replace(hlu:reversedAuthors($autor), ',', ''))"/>
 
     <xsl:variable name="ina"/>
     <xsl:variable name="_corpus"/>
@@ -214,14 +214,19 @@
         <xsl:value-of select="string-join($dnbBookdata//dc:identifier)"/>
     </xsl:variable>
 
+    <xsl:variable name="long-reference"
+        select="concat($sigle, ' ', $autor, ': ', $titel, '. ', $erscheinungsort, ': ', $verlag, ', ', $erscheinungsjahr)"/>
+
+    <xsl:variable name="short-reference"
+        select="concat($straight_autor, ': ', $titel, ' (',  $erscheinungsjahr, ')')"/>
 
     <xsl:template match="/">
         <idsDoc TEIform="TEI.2" type="text" version="1.0">
             <idsHeader TEIform="teiHeader" pattern="text" status="new" type="document" version="1.1">
                 <fileDesc>
                     <titleStmt>
-                        <dokumentSigle>KJL/HRK</dokumentSigle>
-                        <d.title>Christiane F. ; Kai Hermann ; Horst Rieck: Wir Kinder vom Bahnhof Zoo , [Jugendliteratur], (2011)</d.title>
+                        <dokumentSigle><xsl:value-of select="string-join(($corpus_sigle, $doc_sigle), '/')"/></dokumentSigle>
+                        <d.title><xsl:value-of select="$short-reference"/></d.title>
                     </titleStmt>
                     <publicationStmt>
                         <distributor/>
@@ -244,7 +249,7 @@
                     <fileDesc>
                         <titleStmt>
                             <textSigle><xsl:sequence select="$sigle"/></textSigle>
-                            <t.title assemblage="regular">KJL/HRK.00001 F., Christiane ; Hermann, Kai ; Rieck, Horst: Wir Kinder vom Bahnhof Zoo, [Jugendliteratur], Erstv. 1978. - Hamburg, 2011</t.title>
+                            <t.title assemblage="regular"><xsl:value-of select="$long-reference"/></t.title>
                         </titleStmt>
                         <publicationStmt>
                             <distributor/>
@@ -265,7 +270,7 @@
                                         <appearance>EPUB-Datei</appearance>
                                     </edition>
                                     <imprint>
-                                        <publisher><xsl:value-of select="$herausgeber"/></publisher>
+                                        <publisher><xsl:value-of select="$verlag"/></publisher>
                                         <pubDate type="year"><xsl:value-of select="$j"/></pubDate>
                                         <pubDate type="month"/>
                                         <pubDate type="day"/>
@@ -278,7 +283,6 @@
                                 </monogr>
                             </biblStruct>
                             <reference assemblage="regular" type="complete"><xsl:value-of select="concat($sigle, ' ', $autor, ': ', $titel, '. ', $erscheinungsort, ': ', $verlag, ', ', $erscheinungsjahr)"/></reference>
-                            <reference assemblage="regular" type="short">KJL/HRK.00001 F. ; Hermann ; Rieck: Wir Kinder vom Bahnhof Zoo, Erstv. 1978, 2011</reference>
                         </sourceDesc>
                     </fileDesc>
                     <profileDesc>
