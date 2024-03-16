@@ -21,9 +21,12 @@ make target/dnb.zip
 ```bash
 make target/dnb.spacy.zip target/dnb.tree_tagger.zip
 ```
+
 ## News
 
-* 2024-03-16: first working pipeline for EPub ⮕ TEI I5 ⮕ KorAP-XML ⮕ (UDPipe+TreeTagger+Spacy) ⮕ Krill ⮕ KorAP-JSON
+* 2024-03-16
+  * CI/CD pipeline added
+  * first working pipeline for EPub ⮕ TEI I5 ⮕ KorAP-XML ⮕ (UDPipe+TreeTagger+Spacy) ⮕ Krill ⮕ KorAP-JSON
 
 * 2024-03-15: DNB test data added
 

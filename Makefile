@@ -2,12 +2,13 @@ SRC_DIR ?= test/resources/DNB
 BUILD_DIR = build
 TARGET_DIR ?= target
 
+.PHONY: all clean test krill
 
-
-.PHONY: all clean test
-
+.PRECIOUS: $(TARGET_DIR)/%.zip $(TARGET_DIR)/%.i5.xml $(TARGET_DIR)/%.tar
 
 all: $(TARGET_DIR)/dnb.i5.xml
+
+krill: $(TARGET_DIR)/dnb.krill.tar
 
 $(TARGET_DIR)/dnb.i5.xml: $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*.epub))
 	head -n -1 xslt/idsCorpus-template.xml > $@
@@ -42,8 +43,11 @@ $(TARGET_DIR)/%.i5.xml: $(BUILD_DIR)/% xslt/epub2i5.xsl
 %.cmc.zip: %.zip
 	korapxml2conllu $< | pv | conllu2cmc -s | conllu2korapxml > $@
 
-%.krill.tar: %.zip %.ud.zip %.cmc.zip
-	korapxml2krill archive --quiet -w -z -cfg krill-kokokom.cfg --non-word-tokens --meta I5 -i $< -i $(word 2,$^) -i $(word 3,$^) -o $(basename $@)
+%.krill.tar: %.zip
+	mkdir -p $(basename $@)
+	korapxml2krill archive --quiet -w -z -cfg krill-korap4dnb.cfg --non-word-tokens --meta I5 -i $< -o $(basename $@)
+# add annotations later
+# korapxml2krill archive --quiet -w -z -cfg krill-korap4dnb.cfg --non-word-tokens --meta I5 -i $< -i $(word 2,$^) -i $(word 3,$^) -o $(basename $@)
 
 json: *.krill.tar
 	rm -rf json

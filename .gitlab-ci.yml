@@ -1,0 +1,126 @@
+
+stages:
+  - test
+  - build
+  - deploy
+
+variables:
+  VID: $VID
+  DEBIAN_FRONTEND: noninteractive
+  APT_CACHE_DIR: apt-cache
+
+build-and-test-i5:
+  stage: test
+  image: rocker/verse
+  artifacts:
+    paths:
+      - "target/*.i5.xml"
+      - "target/*.zip"
+  cache:
+    - key: DNB4KorAP
+      paths:
+          - apt-cache/
+
+  before_script:
+    - source `find .. -name section_helper.sh`
+    - start_section install_linux_packages "Installing missing Linux packages"
+    - apt-get -o dir::cache::archives="$APT_CACHE_DIR" update
+    - apt-get -o dir::cache::archives="$APT_CACHE_DIR" install -y libxml2-utils
+    - end_section install_linux_packages
+
+  script:
+    - start_section checking_i5 "Building and testing I5 files"
+    - make -j $(nproc) test
+    - end_section checking_i5
+
+
+build-krill:
+  image: perl:5.38
+  stage: build
+  rules:
+    - if: $CI_COMMIT_TAG =~ /.+/
+      variables:
+        VID: $CI_COMMIT_TAG
+    - when: manual
+      variables:
+        VID: $CI_COMMIT_BRANCH-$CI_COMMIT_SHORT_SHA
+        PERL_LOCAL_LIB_ROOT: ./perl5
+        PERL5LIB: ./perl5/lib/perl5
+  cache:
+    - key: DNB4KorAP
+      paths:
+          - $PERL_LOCAL_LIB_ROOT
+          - perl5/
+          - apt-cache/
+    - key:
+        files:
+          - target/dnb.i5.xml
+      paths:
+          - target/dnb.zip
+          - target/dnb.tree_tagger.zip
+          - target/dnb.ud.zip
+          - target/dnb.cmc.zip
+          - target/dnb.spacy.zip
+          - target/dnb.krill.tar
+  before_script:
+    - source `find .. -name section_helper.sh`
+    - start_section install_linux_packages "Installing missing Linux packages"
+    - mkdir -pv $APT_CACHE_DIR
+    - apt-get -o dir::cache::archives="$APT_CACHE_DIR" update
+    - apt-get -o dir::cache::archives="$APT_CACHE_DIR" install -y npm rsync pv jq curl openjdk-17-jre-headless
+    - end_section install_linux_packages
+
+    - start_section install_npm_packages "Installing missing Node packages"
+    - npm install -g 'git+https://gitlab.ids-mannheim.de/KorAP/korap-conllu-cmc.git'
+    - end_section install_npm_packages
+
+    - start_section install_perl_packages "Installing missing Perl packages"
+    - curl -L https://cpanmin.us | perl - App::cpanminus
+    - cpanm -n -l $PERL_LOCAL_LIB_ROOT File::ShareDir::Install https://github.com/KorAP/KorAP-XML-TEI.git
+    - cpanm -n -l $PERL_LOCAL_LIB_ROOT https://github.com/KorAP/KorAP-XML-Krill.git
+    - cpanm -n -l $PERL_LOCAL_LIB_ROOT https://github.com/KorAP/KorAP-XML-CoNLL-U.git
+    - end_section install_perl_packages
+
+  script:
+    - export PATH=$PERL_LOCAL_LIB_ROOT/bin:$PATH
+    - start_section building_krill "Building Krill"
+    - touch *.i5.xml *.zip *.krill.tar # ignore timestamps in make
+    - make -j $(nproc) krill
+    - ls -l target/*.krill.tar
+    - end_section building_krill
+  artifacts:
+    paths:
+      - "target/*.krill.tar"
+      - "target/*.zip"
+
+deploy:
+  stage: deploy
+  dependencies:
+    - "build-krill"
+  when: manual
+  image: rocker/verse
+  before_script:
+    - source `find .. -name section_helper.sh`
+    - start_section setup_ssh "Setting up SSH"
+    - apt-get update
+    - apt-get install  -y rsync openssh-client
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - eval $(ssh-agent -s)
+    - chmod 400 $SSH_PRIVATE_KEY
+    - ssh-add $SSH_PRIVATE_KEY
+    - end_section setup_ssh
+  script:
+    - start_section korapxmlu "Uploading Krill to KorAP instance dnb"
+    - if [ $(ls target/*.krill.tar | wc -l) -lt 1 ]; then echo 'error - less than 1 Krill files found'; false; fi
+    - rm -rf json && mkdir -p json
+    - for f in target/*.krill.tar; do tar -C json -xf $f; done
+    - rsync -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" -avz --delete json korap@$DEPLOY_SERVER:/opt/korap/instance-dnb/
+    - end_section korapxmlu
+    - start_section korapxmlr "Indexing data & restarting KorAP instance dnb"
+    - ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null korap@$DEPLOY_SERVER "cd /opt/korap/instance-dnb/ &&
+     rm -rf index && mkdir -p index &&
+     docker run  -u root --rm -v /opt/korap/instance-dnb:/data:z korap/kustvakt:latest-full Krill-Indexer.jar -c /kustvakt/kustvakt.conf -i /data/json -o /data/index/ && INDEX=./index docker-compose --profile=full -p kyc-ger restart"
+    - end_section korapxmlr
+    - echo "Deploying $VID"
+    - end_section deploy
