@@ -10,6 +10,8 @@ all: $(TARGET_DIR)/dnb.i5.xml
 
 krill: $(TARGET_DIR)/dnb.krill.tar
 
+KORAPXML2CONLLU ?= java -jar lib/korapxml2conllu.jar
+
 $(TARGET_DIR)/dnb.i5.xml: $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*.epub))
 	head -n -1 xslt/idsCorpus-template.xml > $@
 	cat $^ >> $@
@@ -32,16 +34,16 @@ $(TARGET_DIR)/%.i5.xml: $(BUILD_DIR)/% xslt/epub2i5.xsl
 	tei2korapxml -l warn -s -tk - < $< > $@
 
 %.tree_tagger.zip: %.zip
-	korapxml2conllu $< | pv | docker run --rm -i korap/conllu2treetagger -l german | conllu2korapxml > $@
+	$(KORAPXML2CONLLU) $< | pv | docker run --rm -i korap/conllu2treetagger -l german | conllu2korapxml > $@
 
 %.spacy.zip: %.zip
-	korapxml2conllu $< | pv | docker run --rm -i korap/conllu2spacy | conllu2korapxml > $@
+	$(KORAPXML2CONLLU) $< | pv | docker run --rm -i korap/conllu2spacy | conllu2korapxml > $@
 
 %.ud.zip: %.zip
-	korapxml2conllu $< | pv | ./scripts/udpipe2 | conllu2korapxml > $@
+	$(KORAPXML2CONLLU) $< | pv | ./scripts/udpipe2 | conllu2korapxml > $@
 
 %.cmc.zip: %.zip
-	korapxml2conllu $< | pv | conllu2cmc -s | conllu2korapxml > $@
+	$(KORAPXML2CONLLU) $< | pv | conllu2cmc -s | conllu2korapxml > $@
 
 %.krill.tar: %.zip
 	mkdir -p $(basename $@)
