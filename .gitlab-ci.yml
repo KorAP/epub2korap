@@ -34,7 +34,7 @@ build-and-test-i5:
     - end_section checking_i5
 
 
-build-krill:
+build-index:
   image: perl:5.38
   services:
     - docker:dind
@@ -76,6 +76,10 @@ build-krill:
     - curl -Ls 'https://gitlab.ids-mannheim.de/KorAP/CoNLL-U-Treetagger/-/jobs/artifacts/master/raw/conllu2treetagger.xz?job=build-docker-image' | docker load
     - end_section install_tree_tagger
 
+    - start_section install_spacy "Installing spaCy"
+    - curl https://corpora.ids-mannheim.de/tools/conllu2spacy.tar.xz |  docker load
+    - end_section install_spacy
+
     - start_section install_perl_packages "Installing missing Perl packages"
     - curl -L https://cpanmin.us | perl - App::cpanminus
     - cpanm -n -l $PERL_LOCAL_LIB_ROOT File::ShareDir::Install https://github.com/KorAP/KorAP-XML-TEI.git
@@ -85,17 +89,16 @@ build-krill:
 
   script:
     - export PATH=$PERL_LOCAL_LIB_ROOT/bin:$PATH
-    - start_section building_krill "Building Krill"
+    - start_section building_index "Building index"
     - touch target/*.i5.xml target/*.zip target/*.krill.tar # ignore timestamps in make
-    - make -j $(nproc) target/dnb.tree_tagger.zip
-    - make -j $(nproc) target/dnb.ud.zip
-    - make -j $(nproc) krill
-    - ls -l target/*.krill.tar
+    - make -j $(nproc) target/dnb.index.tar.xz
+    - make -j $(nproc) index
+    - ls -l target/*.index.tar
     - end_section building_krill
   artifacts:
     paths:
-      - target/*.krill.tar
       - target/*.zip
+      - target/dnb.index.tar.xz
 
 deploy:
   stage: deploy
