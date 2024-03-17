@@ -5,7 +5,7 @@
 ### To generate I5 corpus
 
 ```bash
-make target/dnb.i5.xml
+make -j $(nproc) target/dnb.i5.xml
 ```
 
 ### To generate the KorAP-XML ZIP
@@ -18,11 +18,30 @@ make target/dnb.zip
 
 ### To generate Annotations
 
+Install prerequisite korap/conllu2treetagger and korap/conllu2spacy docker imeges if not present:
+
 ```bash
-make target/dnb.spacy.zip target/dnb.tree_tagger.zip
+docker image inspect korap/conllu2treetagger:latest || curl -Ls 'https://gitlab.ids-mannheim.de/KorAP/CoNLL-U-Treetagger/-/jobs/artifacts/master/raw/conllu2treetagger.xz?job=build-docker-image' | docker load
+
+docker image inspect korap/conllu2spacy:latest || curl -Ls https://corpora.ids-mannheim.de/tools/conllu2spacy.tar.xz | docker load
+```
+
+Make annotations:
+
+```bash
+make -j $(nproc) target/dnb.ud.zip target/dnb.spacy.zip target/dnb.tree_tagger.zip
+```
+
+Build KorAP all, up to the deployable index:
+
+```bash
+make -j $(nproc) all
 ```
 
 ## News
+
+* 2024-03-17
+  * added `make all` to build all targets, including the index
 
 * 2024-03-16
   * CI/CD pipeline added

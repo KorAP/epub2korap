@@ -6,7 +6,7 @@ TARGET_DIR ?= target
 
 .PRECIOUS: %.zip %.tree_tagger.zip %.ud.zip %.spacy.zip %.i5.xml %.tar
 
-all: $(TARGET_DIR)/dnb.i5.xml
+all: index
 
 krill: $(TARGET_DIR)/dnb.krill.tar
 index: $(TARGET_DIR)/dnb.index.tar.xz
