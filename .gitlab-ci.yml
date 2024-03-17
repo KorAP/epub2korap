@@ -73,11 +73,11 @@ build-index:
     - end_section install_linux_packages
 
     - start_section install_tree_tagger "Installing TreeTagger"
-    - curl -Ls 'https://gitlab.ids-mannheim.de/KorAP/CoNLL-U-Treetagger/-/jobs/artifacts/master/raw/conllu2treetagger.xz?job=build-docker-image' | docker load
+    - docker image inspect korap/conllu2treetagger:latest >/dev/null 2>&1 || curl -Ls 'https://gitlab.ids-mannheim.de/KorAP/CoNLL-U-Treetagger/-/jobs/artifacts/master/raw/conllu2treetagger.xz?job=build-docker-image' | docker load
     - end_section install_tree_tagger
 
     - start_section install_spacy "Installing spaCy"
-    - curl https://corpora.ids-mannheim.de/tools/conllu2spacy.tar.xz |  docker load
+    - docker image inspect korap/conllu2spacy:latest >/dev/null 2>&1 || curl -Ls https://corpora.ids-mannheim.de/tools/conllu2spacy.tar.xz | docker load
     - end_section install_spacy
 
     - start_section install_perl_packages "Installing missing Perl packages"
@@ -90,10 +90,10 @@ build-index:
   script:
     - export PATH=$PERL_LOCAL_LIB_ROOT/bin:$PATH
     - start_section building_index "Building index"
-    - touch target/*.i5.xml target/*.zip target/*.krill.tar # ignore timestamps in make
+    - touch target/*.zip # ignore timestamps in make
+    - sleep 1
+    - touch target/*.ud.zip
     - make -j $(nproc) target/dnb.index.tar.xz
-    - make -j $(nproc) index
-    - ls -l target/*.index.tar
     - end_section building_krill
   artifacts:
     paths:
@@ -103,7 +103,7 @@ build-index:
 deploy:
   stage: deploy
   dependencies:
-    - "build-krill"
+    - "build-index"
   when: manual
   image: rocker/verse
   before_script:
