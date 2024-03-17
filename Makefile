@@ -42,10 +42,7 @@ $(TARGET_DIR)/%.i5.xml: $(BUILD_DIR)/% xslt/epub2i5.xsl xslt/idsCorpus-template.
 %.ud.zip: %.zip
 	$(KORAPXML2CONLLU) $< | pv | ./scripts/udpipe2 | conllu2korapxml > $@
 
-%.cmc.zip: %.zip
-	$(KORAPXML2CONLLU) $< | pv | conllu2cmc -s | conllu2korapxml > $@
-
-%.krill.tar: %.zip %.ud.zip %.tree_tagger.zip
+%.krill.tar: %.zip %.ud.zip %.tree_tagger.zip %.spacy.zip
 	mkdir -p $(basename $@)
 	korapxml2krill archive --quiet -w -z -cfg krill-korap4dnb.cfg --non-word-tokens --meta I5 -i $< -i $(word 2,$^) -i $(word 3,$^) -o $(basename $@)
 
@@ -53,6 +50,16 @@ $(TARGET_DIR)/%.i5.xml: $(BUILD_DIR)/% xslt/epub2i5.xsl xslt/idsCorpus-template.
 	rm -rf $@
 	mkdir -p $@
 	for f in $<; do tar -C $@ -xf $$f; done
+
+%.index: %.json
+	rm -rf $@
+	mkdir -p $@
+	chmod a+rwX $@
+	docker run  --rm -v ./$(TARGET_DIR):/data:z korap/kustvakt:latest-full Krill-Indexer.jar -c /kustvakt/kustvakt.conf -i /data/dnb.json -o /data/dnb.index/
+	chmod o-w $@
+
+%.index.tar.xz: %.index
+	tar -I 'xz -T0' -C $(dir $<) -cf $@ $(notdir $<)
 
 clean:
 	rm -rf $(BUILD_DIR) $(TARGET_DIR)
