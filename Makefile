@@ -2,13 +2,14 @@ SRC_DIR ?= test/resources/DNB
 BUILD_DIR = build
 TARGET_DIR ?= target
 
-.PHONY: all clean test krill
+.PHONY: all clean test krill index
 
 .PRECIOUS: %.zip %.tree_tagger.zip %.ud.zip %.spacy.zip %.i5.xml %.tar
 
 all: $(TARGET_DIR)/dnb.i5.xml
 
 krill: $(TARGET_DIR)/dnb.krill.tar
+index: $(TARGET_DIR)/dnb.index.tar.xz
 
 KORAPXML2CONLLU ?= java -jar lib/korapxml2conllu.jar
 
@@ -53,10 +54,7 @@ $(TARGET_DIR)/%.i5.xml: $(BUILD_DIR)/% xslt/epub2i5.xsl xslt/idsCorpus-template.
 
 %.index: %.json
 	rm -rf $@
-	mkdir -p $@
-	chmod a+rwX $@
-	docker run  --rm -v ./$(TARGET_DIR):/data:z korap/kustvakt:latest-full Krill-Indexer.jar -c /kustvakt/kustvakt.conf -i /data/dnb.json -o /data/dnb.index/
-	chmod o-w $@
+	java -jar lib/Krill-Indexer.jar -c lib/krill.conf -i $< -o $@
 
 %.index.tar.xz: %.index
 	tar -I 'xz -T0' -C $(dir $<) -cf $@ $(notdir $<)
