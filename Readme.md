@@ -13,7 +13,7 @@ make -j $(nproc) target/dnb.i5.xml
 Prerequisite: [KorAP-XML-CoNLL-U](https://github.com/KorAP/KorAP-XML-CoNLL-U)
 
 ```bash
-make target/dnb.zip
+make -j $(nproc) target/dnb.zip
 ```
 
 ### To generate Annotations
@@ -31,6 +31,8 @@ Make annotations:
 ```bash
 make -j $(nproc) target/dnb.ud.zip target/dnb.spacy.zip target/dnb.tree_tagger.zip
 ```
+
+### To build KorAP index (also directly)
 
 Build KorAP all, up to the deployable index:
 
