@@ -42,6 +42,10 @@ make -j $(nproc) all
 
 ## News
 
+* 2024-03-18
+  * added `make deploy` to install new index and restart local KorAP@DNB instance (also available as ci target)
+  * added `show-server-logs` and `show-server-status` make targets to monitor the local KorAP@DNB instance
+
 * 2024-03-17
   * added `make all` to build all targets, including the index
 

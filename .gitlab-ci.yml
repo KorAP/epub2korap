@@ -118,16 +118,6 @@ deploy:
     - ssh-add $SSH_PRIVATE_KEY
     - end_section setup_ssh
   script:
-    - start_section korapxmlu "Uploading Krill to KorAP instance dnb"
-    - if [ $(ls target/*.krill.tar | wc -l) -lt 1 ]; then echo 'error - less than 1 Krill files found'; false; fi
-    - rm -rf json && mkdir -p json
-    - for f in target/*.krill.tar; do tar -C json -xf $f; done
-    - rsync -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" -avz --delete json korap@$DEPLOY_SERVER:/opt/korap/instance-dnb/
-    - end_section korapxmlu
-    - start_section korapxmlr "Indexing data & restarting KorAP instance dnb"
-    - ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null korap@$DEPLOY_SERVER "cd /opt/korap/instance-dnb/ &&
-     rm -rf index && mkdir -p index &&
-     docker run  -u root --rm -v /opt/korap/instance-dnb:/data:z korap/kustvakt:latest-full Krill-Indexer.jar -c /kustvakt/kustvakt.conf -i /data/json -o /data/index/ && INDEX=./index docker-compose --profile=full -p kyc-ger restart"
-    - end_section korapxmlr
-    - echo "Deploying $VID"
+    - start_section korapxmlu "Uploading index to KorAP4DNB instance"
+    - make deploy
     - end_section deploy

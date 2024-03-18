@@ -1,10 +1,15 @@
 SRC_DIR ?= test/resources/DNB
 BUILD_DIR = build
 TARGET_DIR ?= target
+DEPLOY_HOST ?= compute.ids-mannheim.de
+DEPLOY_USER ?= korap
+DEPLOY_PATH ?= /export/netapp/korap4dnb
 
-.PHONY: all clean test krill index
+.PHONY: all clean test krill index deploy server-log server-status
 
 .PRECIOUS: %.zip %.tree_tagger.zip %.ud.zip %.spacy.zip %.i5.xml %.tar
+
+.DELETE_ON_ERROR:
 
 all: index
 
@@ -58,6 +63,16 @@ $(TARGET_DIR)/%.i5.xml: $(BUILD_DIR)/% xslt/epub2i5.xsl xslt/idsCorpus-template.
 
 %.index.tar.xz: %.index
 	tar -I 'xz -T0' -C $(dir $<) -cf $@ $(notdir $<)
+
+deploy: $(TARGET_DIR)/dnb.index.tar.xz korap4dnb-compose.yml
+	rsync -v $^ $(DEPLOY_USER)@$(DEPLOY_HOST):$(DEPLOY_PATH)/
+	ssh $(DEPLOY_USER)@$(DEPLOY_HOST) "mkdir -p $(DEPLOY_PATH) && cd $(DEPLOY_PATH) && docker compose -p korap4dnb --profile=lite -f $(notdir $(word 2,$^)) up -d --dry-run && docker compose -p korap4dnb stop && (mv -f dnb.index dnb.index.bak || true) && tar Jxvf $(notdir $<) && docker compose -p korap4dnb --profile=lite -f $(notdir $(word 2,$^)) up -d"
+
+show-server-log:
+	ssh $(DEPLOY_USER)@$(DEPLOY_HOST) "cd $(DEPLOY_PATH) && docker compose -p korap4dnb --profile=lite -f korap4dnb-compose.yml logs -f"
+
+show-server-status:
+	ssh $(DEPLOY_USER)@$(DEPLOY_HOST) "cd $(DEPLOY_PATH) && docker compose -p korap4dnb --profile=lite -f korap4dnb-compose.yml ps"
 
 clean:
 	rm -rf $(BUILD_DIR) $(TARGET_DIR)
