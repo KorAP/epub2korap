@@ -60,8 +60,7 @@ build-index:
       paths:
           - target/dnb.zip
           - target/dnb.tree_tagger.zip
-          - target/dnb.ud.zip
-          - target/dnb.cmc.zip
+          - target/dnb.marmot-malt.zip
           - target/dnb.spacy.zip
           - target/dnb.krill.tar
   before_script:
