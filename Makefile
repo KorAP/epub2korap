@@ -7,7 +7,7 @@ DEPLOY_PATH ?= /export/netapp/korap4dnb
 
 .PHONY: all clean test krill index deploy server-log server-status
 
-.PRECIOUS: %.zip %.tree_tagger.zip %.ud.zip %.spacy.zip %.i5.xml %.tar
+.PRECIOUS: %.zip %.tree_tagger.zip %.ud.zip %.marmot-malt.zip %.spacy.zip %.i5.xml %.tar
 
 .DELETE_ON_ERROR:
 
@@ -45,12 +45,23 @@ $(TARGET_DIR)/%.i5.xml: $(BUILD_DIR)/% xslt/epub2i5.xsl xslt/idsCorpus-template.
 %.spacy.zip: %.zip
 	$(KORAPXML2CONLLU) $< | pv | docker run --rm -i korap/conllu2spacy | conllu2korapxml > $@
 
+models/de.marmot:
+	mkdir -p models
+	wget -O $@ https://cistern.cis.lmu.de/marmot/models/CURRENT/spmrl/de.marmot
+
+models/german.mco:
+	mkdir -p models
+	wget -O $@  https://corpora.ids-mannheim.de/tools/$@
+
+%.marmot-malt.zip: %.zip models/de.marmot models/german.mco
+	$(KORAPXML2CONLLU) -t marmot:models/de.marmot -P malt:models/german.mco $< | tee $(TARGET_DIR)/dnb.marmot-malt.conllu | conllu2korapxml > $@
+
 %.ud.zip: %.zip
 	$(KORAPXML2CONLLU) $< | pv | ./scripts/udpipe2 | conllu2korapxml > $@
 
-%.krill.tar: %.zip %.ud.zip %.tree_tagger.zip %.spacy.zip
+%.krill.tar: %.zip %.marmot-malt.zip %.tree_tagger.zip %.spacy.zip
 	mkdir -p $(basename $@)
-	korapxml2krill archive --quiet -w -z -cfg krill-korap4dnb.cfg --non-word-tokens --meta I5 -i $< -i $(word 2,$^) -i $(word 3,$^) -o $(basename $@)
+	korapxml2krill archive --quiet -w -z -cfg krill-korap4dnb.cfg --non-word-tokens --meta I5 -i $< -i $(word 2,$^) -i $(word 3,$^) -i $(word 4,$^) -o $(basename $@)
 
 %.json: %.krill.tar
 	rm -rf $@
