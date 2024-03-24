@@ -84,7 +84,7 @@ build-index:
     - curl -L https://cpanmin.us | perl - App::cpanminus
     - cpanm -n -l $PERL_LOCAL_LIB_ROOT File::ShareDir::Install https://github.com/KorAP/KorAP-XML-TEI.git
     - cpanm -n -l $PERL_LOCAL_LIB_ROOT https://github.com/KorAP/KorAP-XML-Krill.git@v0.53
-    - cpanm -n -l $PERL_LOCAL_LIB_ROOT https://github.com/KorAP/KorAP-XML-CoNLL-U.git
+    - cpanm -n -l $PERL_LOCAL_LIB_ROOT https://github.com/KorAP/KorAP-XML-CoNLL-U.git@korap4dnb
     - end_section install_perl_packages
 
   script:
