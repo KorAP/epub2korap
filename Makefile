@@ -48,11 +48,11 @@ $(TARGET_DIR)/%.i5.xml: $(BUILD_DIR)/% xslt/epub2i5.xsl xslt/idsCorpus-template.
 
 models/de.marmot:
 	mkdir -p models
-	wget -O $@ https://cistern.cis.lmu.de/marmot/models/CURRENT/spmrl/de.marmot
+	curl -sL -o $@ https://cistern.cis.lmu.de/marmot/models/CURRENT/spmrl/de.marmot
 
 models/german.mco:
 	mkdir -p models
-	wget -O $@  https://corpora.ids-mannheim.de/tools/$@
+	curl -sL -o $@  https://corpora.ids-mannheim.de/tools/$@
 
 %.marmot-malt.zip: %.zip models/de.marmot models/german.mco
 	$(KORAPXML2CONLLU) -T $(MAX_THREADS) -t marmot:models/de.marmot -P malt:models/german.mco $< | tee $(TARGET_DIR)/dnb.marmot-malt.conllu | conllu2korapxml > $@
