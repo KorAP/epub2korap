@@ -118,5 +118,6 @@ deploy:
     - end_section setup_ssh
   script:
     - start_section korapxmlu "Uploading index to KorAP4DNB instance"
+    - touch target/dnb.index.tar.xz
     - make deploy
     - end_section deploy
