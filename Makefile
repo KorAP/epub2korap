@@ -4,6 +4,7 @@ TARGET_DIR ?= target
 DEPLOY_HOST ?= compute.ids-mannheim.de
 DEPLOY_USER ?= korap
 DEPLOY_PATH ?= /export/netapp/korap4dnb
+MAX_THREADS ?= $(shell nproc)
 
 .PHONY: all clean test krill index deploy server-log server-status
 
@@ -54,7 +55,7 @@ models/german.mco:
 	wget -O $@  https://corpora.ids-mannheim.de/tools/$@
 
 %.marmot-malt.zip: %.zip models/de.marmot models/german.mco
-	$(KORAPXML2CONLLU) -t marmot:models/de.marmot -P malt:models/german.mco $< | tee $(TARGET_DIR)/dnb.marmot-malt.conllu | conllu2korapxml > $@
+	$(KORAPXML2CONLLU) -T $(MAX_THREADS) -t marmot:models/de.marmot -P malt:models/german.mco $< | tee $(TARGET_DIR)/dnb.marmot-malt.conllu | conllu2korapxml > $@
 
 %.ud.zip: %.zip
 	$(KORAPXML2CONLLU) $< | pv | ./scripts/udpipe2 | conllu2korapxml > $@

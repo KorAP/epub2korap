@@ -92,8 +92,8 @@ build-index:
     - start_section building_index "Building index"
     - touch target/*.zip # ignore timestamps in make
     - sleep 1
-    - touch target/*.ud.zip
-    - make -j $(nproc) target/dnb.index.tar.xz
+    - touch target/*.*.zip
+    - MAX_THREADS=2 make -j $(nproc) target/dnb.index.tar.xz
     - end_section building_krill
   artifacts:
     paths:
