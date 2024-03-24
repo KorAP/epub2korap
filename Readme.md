@@ -29,7 +29,7 @@ docker image inspect korap/conllu2spacy:latest || curl -Ls https://corpora.ids-m
 Make annotations:
 
 ```bash
-make -j $(nproc) target/dnb.ud.zip target/dnb.spacy.zip target/dnb.tree_tagger.zip
+make -j $(nproc) target/dnb.marmot-malt.zip target/dnb.spacy.zip target/dnb.tree_tagger.zip
 ```
 
 ### To build KorAP index (also directly)
@@ -41,6 +41,11 @@ make -j $(nproc) all
 ```
 
 ## News
+
+* 2024-03-24
+  * slow udpipe2 dropped
+  * added marmot POS and morpho-syntactic annotations
+  * added malt dependency annotations
 
 * 2024-03-18
   * added `make deploy` to install new index and restart local KorAP@DNB instance (also available as ci target)
