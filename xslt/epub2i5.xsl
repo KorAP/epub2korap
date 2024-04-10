@@ -22,7 +22,7 @@
     </xsl:variable>
 
     <xsl:variable name="autor"
-        select="string-join(replace($dnbBookdata//dc:creator, ' *\[[^\]]*\]', ''), ' ; ')"/>
+        select="replace(string-join($dnbBookdata//dc:creator[not(matches(., '\[(Erzähler)\]'))], ' ; '), ' *\[[^\]]*\]', '')"/>
 
     <xsl:variable name="straight_autor" select="normalize-space(replace(hlu:reversedAuthors($autor), ',', ''))"/>
 
