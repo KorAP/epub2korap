@@ -5,7 +5,7 @@
 ### To generate I5 corpus
 
 ```bash
-make -j $(nproc) target/dnb.i5.xml
+make -j $(nproc) target/dnb18.i5.xml YY=18
 ```
 
 ### To generate the KorAP-XML ZIP
@@ -13,12 +13,12 @@ make -j $(nproc) target/dnb.i5.xml
 Prerequisite: [KorAP-XML-CoNLL-U](https://github.com/KorAP/KorAP-XML-CoNLL-U)
 
 ```bash
-make -j $(nproc) target/dnb.zip
+make -j $(nproc) target/dnb23.zip YY=23
 ```
 
 ### To generate Annotations
 
-Install prerequisite korap/conllu2treetagger and korap/conllu2spacy docker imeges if not present:
+Install prerequisite korap/conllu2treetagger and korap/conllu2spacy docker images if not present:
 
 ```bash
 docker image inspect korap/conllu2treetagger:latest || curl -Ls 'https://gitlab.ids-mannheim.de/KorAP/CoNLL-U-Treetagger/-/jobs/artifacts/master/raw/conllu2treetagger.xz?job=build-docker-image' | docker load
@@ -29,18 +29,25 @@ docker image inspect korap/conllu2spacy:latest || curl -Ls https://corpora.ids-m
 Make annotations:
 
 ```bash
-make -j $(nproc) target/dnb.marmot-malt.zip target/dnb.spacy.zip target/dnb.tree_tagger.zip
+make -j $(nproc) target/dnb20.marmot-malt.zip target/dnb20.spacy.zip target/dnb20.tree_tagger.zip YY=20
 ```
 
 ### To build KorAP index (also directly)
 
-Build KorAP all, up to the deployable index:
+Build KorAP all, up to the ~~deployable~~ index:
 
 ```bash
-make -j $(nproc) all
+make -j $(nproc) all YY=23
 ```
 
 ## News
+
+* 2024-04-10
+  * multiple authors (and non-authors) are now correctly handled
+  * some more .(x)html files are now dropped (toc, cover, etc.)
+  * **PRELIMINARY** support for splitting everything into annual volumes
+    * use `make YY=22` to select 2022
+    * does not yet work for the index!
 
 * 2024-03-24
   * slow udpipe2 dropped

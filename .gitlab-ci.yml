@@ -56,13 +56,13 @@ build-index:
           - apt-cache/
     - key:
         files:
-          - target/dnb.i5.xml
+          - target/dnb18.i5.xml
       paths:
-          - target/dnb.zip
-          - target/dnb.tree_tagger.zip
-          - target/dnb.marmot-malt.zip
-          - target/dnb.spacy.zip
-          - target/dnb.krill.tar
+          - target/dnb18.zip
+          - target/dnb18.tree_tagger.zip
+          - target/dnb18.marmot-malt.zip
+          - target/dnb18.spacy.zip
+          - target/dnb18.krill.tar
   before_script:
     - source `find .. -name section_helper.sh`
     - start_section install_linux_packages "Installing missing Linux packages"
@@ -92,12 +92,12 @@ build-index:
     - touch target/*.zip # ignore timestamps in make
     - sleep 1
     - touch target/*.*.zip
-    - MAX_THREADS=2 make -j $(nproc) target/dnb.index.tar.xz
+    - MAX_THREADS=2 make -j $(nproc) target/dnb18.index.tar.xz
     - end_section building_krill
   artifacts:
     paths:
       - target/*.zip
-      - target/dnb.index.tar.xz
+      - target/dnb18.index.tar.xz
 
 deploy:
   stage: deploy
@@ -118,6 +118,6 @@ deploy:
     - end_section setup_ssh
   script:
     - start_section korapxmlu "Uploading index to KorAP4DNB instance"
-    - touch target/dnb.index.tar.xz
+    - touch target/dnb18.index.tar.xz
     - make deploy
     - end_section deploy

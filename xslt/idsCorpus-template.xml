@@ -4,7 +4,7 @@
   <idsHeader TEIform="teiHeader" pattern="allesaußerZtg/Zschr" status="new" type="corpus" version="1.1">
     <fileDesc>
       <titleStmt>
-        <korpusSigle>DNB</korpusSigle>
+        <korpusSigle>DNB{YY}</korpusSigle>
         <c.title>Deutsche Nationalbibliothek: Belletristik</c.title>
       </titleStmt>
       <publicationStmt>

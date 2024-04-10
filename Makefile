@@ -5,6 +5,7 @@ DEPLOY_HOST ?= compute.ids-mannheim.de
 DEPLOY_USER ?= korap
 DEPLOY_PATH ?= /export/netapp/korap4dnb
 MAX_THREADS ?= $(shell nproc)
+YY ?= 18
 
 .PHONY: all clean test krill index deploy server-log server-status
 
@@ -14,17 +15,17 @@ MAX_THREADS ?= $(shell nproc)
 
 all: index
 
-krill: $(TARGET_DIR)/dnb.krill.tar
-index: $(TARGET_DIR)/dnb.index.tar.xz
+krill: $(TARGET_DIR)/dnb$(YY).krill.tar
+index: $(TARGET_DIR)/dnb$(YY).index.tar.xz
 
 KORAPXML2CONLLU ?= java -jar lib/korapxml2conllu.jar
 
-$(TARGET_DIR)/dnb.i5.xml: $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*.epub))
-	head -n -1 xslt/idsCorpus-template.xml > $@
-	cat $^ >> $@
+$(TARGET_DIR)/dnb$(YY).i5.xml: $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*.epub))
+	head -n -1 xslt/idsCorpus-template.xml | sed -e 's/{YY}/$(YY)/' > $@
+	for f in $^; do if head -500 $$f | grep -Eq '<pubDate type="year">..$(YY)'; then cat $$f >> $@; fi; done
 	tail -n 1 xslt/idsCorpus-template.xml  >> $@
 
-test: $(TARGET_DIR)/dnb.i5.xml
+test: $(TARGET_DIR)/dnb$(YY).i5.xml
 	xmllint --noout --valid $<
 
 $(BUILD_DIR)/%: $(SRC_DIR)/%.epub
@@ -55,7 +56,7 @@ models/german.mco:
 	curl -sL -o $@  https://corpora.ids-mannheim.de/tools/$@
 
 %.marmot-malt.zip: %.zip models/de.marmot models/german.mco
-	$(KORAPXML2CONLLU) -T $(MAX_THREADS) -t marmot:models/de.marmot -P malt:models/german.mco $< | tee $(TARGET_DIR)/dnb.marmot-malt.conllu | conllu2korapxml > $@
+	$(KORAPXML2CONLLU) -T $(MAX_THREADS) -t marmot:models/de.marmot -P malt:models/german.mco $< | tee $(TARGET_DIR)/dnb$(YY).marmot-malt.conllu | conllu2korapxml > $@
 
 %.ud.zip: %.zip
 	$(KORAPXML2CONLLU) $< | pv | ./scripts/udpipe2 | conllu2korapxml > $@
