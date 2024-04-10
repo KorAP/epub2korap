@@ -11,3 +11,4 @@ target/
 json/
 .gitlab-ci-local/
 \#*
+models/
