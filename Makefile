@@ -35,7 +35,7 @@ $(BUILD_DIR)/%: $(SRC_DIR)/%.epub
 $(TARGET_DIR)/%.i5.xml: $(BUILD_DIR)/% xslt/epub2i5.xsl xslt/idsCorpus-template.xml
 	mkdir -p $(TARGET_DIR)
 	echo "Converting $< to $@"
-	java -jar lib/saxon9ee.jar -xsl:xslt/epub2i5.xsl $</*/content.opf > $@
+	java -jar lib/saxon9ee.jar -xsl:xslt/epub2i5.xsl $(shell find $< -name content.opf) > $@
 
 %.zip: %.i5.xml
 	tei2korapxml -l warn -s -tk - < $< > $@
