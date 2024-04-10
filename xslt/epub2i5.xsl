@@ -47,15 +47,18 @@
     </xsl:variable>
 
     <xsl:variable name="titel">
-        <xsl:choose>
-            <xsl:when test="contains($dnbBookdata//dc:title,':')">
-                <xsl:value-of select="normalize-space(substring-before(substring-before($dnbBookdata//dc:title, '/'), ':'))"
-                    />
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:value-of select="normalize-space(substring-before($dnbBookdata//dc:title, '/'))"/>
-            </xsl:otherwise>
-        </xsl:choose>
+        <xsl:variable name="title-with-subtitles">
+            <xsl:choose>
+                <xsl:when test="contains($dnbBookdata//dc:title,':')">
+                    <xsl:value-of select="normalize-space(substring-before(substring-before($dnbBookdata//dc:title, '/'), ':'))"
+                        />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="normalize-space(substring-before($dnbBookdata//dc:title, '/'))"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:value-of select="normalize-space(replace($title-with-subtitles, '\|.*', ''))"/>
     </xsl:variable>
 
     <xsl:variable name="erscheinungsort">
