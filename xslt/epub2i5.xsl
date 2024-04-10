@@ -348,8 +348,15 @@
         </emph>
     </xsl:template>
 
-    <xsl:template match="xhtml:span[matches(@class, '(bold|italic|big| )+')]">
-        <hi rend="{@class}">
+    <xsl:template match="xhtml:span[matches(@class, '(bold|italic|big|kursiv| )+')]">
+        <xsl:variable name="class" select="replace(@class, 'kursiv', 'italic')"/>
+        <hi rend="{$class}">
+            <xsl:apply-templates/>
+        </hi>
+    </xsl:template>
+
+    <xsl:template match="xhtml:b">
+        <hi rend="bold">
             <xsl:apply-templates/>
         </hi>
     </xsl:template>
