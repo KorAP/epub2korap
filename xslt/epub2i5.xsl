@@ -378,8 +378,16 @@
         </p>
     </xsl:template>
 
+    <xsl:template match="xhtml:nav">
+        <!-- <gap reason="toc"/>  -->
+    </xsl:template>
+
     <xsl:template match="xhtml:img">
         <!-- <gap reason="image"/>  -->
+    </xsl:template>
+
+    <xsl:template match="xhtml:audio">
+        <!-- <gap reason="audio"/>  -->
     </xsl:template>
 
     <xsl:template match="xhtml:a">
