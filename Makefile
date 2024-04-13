@@ -6,6 +6,7 @@ DEPLOY_USER ?= korap
 DEPLOY_PATH ?= /export/netapp/korap4dnb
 MAX_THREADS ?= $(shell nproc)
 YY ?= 18
+MAKE ?= make -j $(shell nproc)
 
 .PHONY: all clean test i5 i5valid krill index deploy server-log server-status
 
@@ -97,3 +98,7 @@ show-server-status:
 clean:
 	rm -rf $(BUILD_DIR) $(TARGET_DIR)
 
+alli5:
+	for yy in {98..99} {00..23}; do \
+	    $(MAKE) i5 YY=$$yy; \
+	done
