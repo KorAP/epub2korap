@@ -49,12 +49,12 @@
     <xsl:variable name="titel">
         <xsl:variable name="title-with-subtitles">
             <xsl:choose>
-                <xsl:when test="contains($dnbBookdata//dc:title,':')">
-                    <xsl:value-of select="normalize-space(substring-before(substring-before($dnbBookdata//dc:title, '/'), ':'))"
+                <xsl:when test="contains(($dnbBookdata//dc:title)[1],':')">
+                    <xsl:value-of select="normalize-space(substring-before(substring-before(($dnbBookdata//dc:title)[1], '/'), ':'))"
                         />
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:value-of select="normalize-space(substring-before($dnbBookdata//dc:title, '/'))"/>
+                    <xsl:value-of select="normalize-space(substring-before(($dnbBookdata//dc:title)[1], '/'))"/>
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
@@ -63,47 +63,47 @@
 
     <xsl:variable name="erscheinungsort">
         <xsl:choose>
-            <xsl:when test="contains($dnbBookdata//dc:publisher,':')">
-                <xsl:value-of select="normalize-space(substring-before($dnbBookdata//dc:publisher, ':'))"/>
+            <xsl:when test="contains(($dnbBookdata//dc:publisher)[1], ':')">
+                <xsl:value-of select="normalize-space(substring-before(($dnbBookdata//dc:publisher)[1], ':'))"/>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:value-of select="normalize-space($dnbBookdata//dc:publisher)"/>
+                <xsl:value-of select="normalize-space(($dnbBookdata//dc:publisher)[1])"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
 
-    <xsl:variable name="texttype" select="replace($dnbBookdata//dc:subject[matches(., '^[A-Z] ')], '^[A-Z] (.*)', '$1')"/>
+    <xsl:variable name="texttype" select="replace(($dnbBookdata//dc:subject[matches(., '^[A-Z] ')])[1], '^[A-Z] (.*)', '$1')"/>
 
     <xsl:variable name="verlag">
         <xsl:choose>
-            <xsl:when test="contains($dnbBookdata//dc:publisher,':')">
-                <xsl:value-of select="normalize-space(substring-after($dnbBookdata//dc:publisher, ':'))"/>
+            <xsl:when test="contains(($dnbBookdata//dc:publisher)[1], ':')">
+                <xsl:value-of select="normalize-space(substring-after(($dnbBookdata//dc:publisher)[1], ':'))"/>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:value-of select="normalize-space($dnbBookdata//dc:publisher)"/>
+                <xsl:value-of select="normalize-space(($dnbBookdata//dc:publisher)[1])"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
 
     <xsl:variable name="erscheinungsjahr">
         <xsl:choose>
-            <xsl:when test="matches($dnbBookdata//dc:date, '^[0-9]{4}$')">
-                <xsl:value-of select="$dnbBookdata//dc:date"/>
+            <xsl:when test="dnbBookdata//dc:date[matches(normalize-space(.), '^[0-9]{4}$')]">
+                <xsl:value-of select="$dnbBookdata//dc:date[matches(normalize-space(.), '^[0-9]{4}$')][1]"/>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:value-of select="substring-before($dnbBookdata//dc:date, '-')"/>
+                <xsl:value-of select="substring-before(($dnbBookdata//dc:date)[1], '-')"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
 
     <xsl:variable name="untertitel"
-        select="normalize-space(substring-after(substring-before($dnbBookdata//dc:title, '/'), ':'))"/>
+        select="normalize-space(substring-after(substring-before(($dnbBookdata//dc:title)[1], '/'), ':'))"/>
 
     <xsl:variable name="herausgeber">
         <xsl:choose>
             <xsl:when test="$dnbBookdata//dc:creator[ends-with(.,'[Hrsg.]')]">
                 <xsl:value-of
-                    select="replace(string-join($dnbBookdata//dc:creator[ends-with(.,'[Hrsg.]')], ' ; '),'\s?\[Hrsg.\]','')"
+                    select="replace(string-join($dnbBookdata//dc:creator[ends-with(.,'[Hrsg.]')][1], ' ; '),'\s?\[Hrsg.\]','')"
                     />
             </xsl:when>
             <xsl:otherwise>.</xsl:otherwise>
