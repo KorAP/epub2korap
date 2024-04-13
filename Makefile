@@ -7,7 +7,7 @@ DEPLOY_PATH ?= /export/netapp/korap4dnb
 MAX_THREADS ?= $(shell nproc)
 YY ?= 18
 
-.PHONY: all clean test krill index deploy server-log server-status
+.PHONY: all clean test i5 i5valid krill index deploy server-log server-status
 
 .PRECIOUS: %.zip %.tree_tagger.zip %.ud.zip %.marmot-malt.zip %.spacy.zip %.i5.xml %.tar
 
@@ -26,6 +26,12 @@ $(TARGET_DIR)/dnb$(YY).i5.xml: $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.x
 	tail -n 1 xslt/idsCorpus-template.xml  >> $@
 
 test: $(TARGET_DIR)/dnb$(YY).i5.xml
+	xmllint --noout --valid $<
+
+i5: $(TARGET_DIR)/dnb$(YY).i5.xml
+	xmllint --noout $<
+
+i5valid: $(TARGET_DIR)/dnb$(YY).i5.xml
 	xmllint --noout --valid $<
 
 $(BUILD_DIR)/%: $(SRC_DIR)/%.epub
