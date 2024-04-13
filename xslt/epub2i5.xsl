@@ -88,7 +88,7 @@
     <xsl:variable name="erscheinungsjahr">
         <xsl:choose>
             <xsl:when test="dnbBookdata//dc:date[matches(normalize-space(.), '^[0-9]{4}$')]">
-                <xsl:value-of select="$dnbBookdata//dc:date[matches(normalize-space(.), '^[0-9]{4}$')][1]"/>
+                <xsl:value-of select="($dnbBookdata//dc:date[matches(normalize-space(.), '^[0-9]{4}$')])[1]"/>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:value-of select="substring-before(($dnbBookdata//dc:date)[1], '-')"/>
@@ -327,6 +327,12 @@
         </div>
     </xsl:template>
 
+    <xsl:template match="xhtml:body/text()">
+        <p>
+            <xsl:value-of select="."/>
+        </p>
+    </xsl:template>
+
     <xsl:template match="xhtml:title">
         <head>
             <xsl:apply-templates/>
@@ -364,6 +370,13 @@
         </hi>
     </xsl:template>
 
+     <xsl:template match="xhtml:i">
+        <hi rend="italic">
+            <xsl:apply-templates/>
+        </hi>
+    </xsl:template>
+
+
     <xsl:template match="xhtml:sub|xhtml:span[@class='sub']">
         <hi rend="sub">
             <xsl:apply-templates/>
@@ -376,19 +389,45 @@
         </hi>
     </xsl:template>
 
-    <xsl:template match="xhtml:div">
-        <div type="section">
-            <xsl:apply-templates/>
-        </div>
-    </xsl:template>
+    <xsl:template match="xhtml:div[not(normalize-space(replace(., '&#160;', ' ')))]" priority="1.0"/>
 
-    <xsl:template match="xhtml:p">
+    <xsl:template match="xhtml:div/xhtml:div">
         <p>
             <xsl:apply-templates/>
         </p>
     </xsl:template>
 
-    <xsl:template match="xhtml:nav">
+    <xsl:template match="xhtml:body/xhtml:div[(descendant::xhtml:p|descendant::xhtml:div)]">
+        <div type="section">
+            <xsl:apply-templates/>
+        </div>
+    </xsl:template>
+
+     <xsl:template match="xhtml:body/xhtml:div[not(descendant::xhtml:p|descendant::xhtml:div)]">
+         <div type="section">
+            <p>
+                <xsl:apply-templates/>
+            </p>
+        </div>
+    </xsl:template>
+
+    <xsl:template match="xhtml:p[not(descendant::xhtml:p|descendant::xhtml:div)]">
+        <xsl:if test="normalize-space(.)">
+            <p>
+                <xsl:apply-templates/>
+            </p>
+        </xsl:if>
+    </xsl:template>
+
+    <xsl:template match="xhtml:p[descendant::xhtml:p|descendant::xhtml:div]">
+        <xsl:if test="normalize-space(.)">
+            <div type="section">
+                <xsl:apply-templates/>
+            </div>
+        </xsl:if>
+    </xsl:template>
+
+   <xsl:template match="xhtml:nav">
         <!-- <gap reason="toc"/>  -->
     </xsl:template>
 
@@ -400,6 +439,30 @@
         <!-- <gap reason="audio"/>  -->
     </xsl:template>
 
+    <xsl:template match="xhtml:body/xhtml:a">
+        <p>
+            <ref target="{@href}">
+                <xsl:apply-templates />
+            </ref>
+        </p>
+    </xsl:template>
+
+     <xsl:template match="xhtml:body/xhtml:span">
+        <xsl:message>
+            <xsl:text>unhandled span element: </xsl:text><xsl:value-of select="concat(name(), ' ', string-join(./@*[normalize-space(.) != '']/concat(name(), ':', ., ' '), '_'))"/>
+        </xsl:message>
+        <div type="section">
+            <p>
+              <xsl:value-of select="."/>
+            </p>
+        </div>
+    </xsl:template>
+    <xsl:template match="xhtml:span">
+        <xsl:message>
+            <xsl:text>unhandled span element: </xsl:text><xsl:value-of select="concat(name(), ' ', string-join(./@*[normalize-space(.) != '']/concat(name(), ':', ., ' '), '_'))"/>
+        </xsl:message>
+        <xsl:value-of select="."/>
+    </xsl:template>
     <xsl:template match="xhtml:a">
         <ref target="{@href}">
             <xsl:apply-templates />
@@ -412,6 +475,16 @@
         <xsl:message>
             <xsl:text>unhandled element: </xsl:text><xsl:value-of select="concat(name(), ' ', string-join(./@*[normalize-space(.) != '']/concat(name(), ':', ., ' '), '_'))"/>
         </xsl:message>
+        <xsl:choose>
+            <xsl:when test="descendant::xhtml:div|descendant::xhtml:p|parent::xhtml:body">
+                <div type="section">
+                    <xsl:apply-templates/>
+                </div>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:apply-templates select="./*|node()"/>
+            </xsl:otherwise>
+        </xsl:choose>
         <xsl:apply-templates/>
     </xsl:template>
 
