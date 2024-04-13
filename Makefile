@@ -99,6 +99,6 @@ clean:
 	rm -rf $(BUILD_DIR) $(TARGET_DIR)
 
 alli5:
-	for yy in {98..99} {00..23}; do \
+	for yy in $(shell seq -f "%02.f" 95 99) $(shell seq -f "%02.f" 0 24); do \
 	    $(MAKE) i5 YY=$$yy; \
 	done
