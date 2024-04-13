@@ -38,6 +38,7 @@ $(BUILD_DIR)/%: $(SRC_DIR)/%.epub
 	mkdir -p $@
 	echo "Converting $< to $@"
 	unzip -q -o $< -d $@
+	chmod -R ug+rwX $@
 
 $(TARGET_DIR)/%.i5.xml: $(BUILD_DIR)/% xslt/epub2i5.xsl xslt/idsCorpus-template.xml
 	mkdir -p $(TARGET_DIR)
