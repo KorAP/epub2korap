@@ -439,11 +439,13 @@
     </xsl:template>
 
     <xsl:template match="xhtml:body/xhtml:a">
-        <p>
-            <ref target="{@href}">
-                <xsl:apply-templates />
-            </ref>
-        </p>
+        <xsl:if test="normalize-space(.)">
+            <p>
+                <ref target="{@href}">
+                    <xsl:apply-templates />
+                </ref>
+            </p>
+        </xsl:if>
     </xsl:template>
 
      <xsl:template match="xhtml:body/xhtml:span">
@@ -463,9 +465,11 @@
         <xsl:value-of select="."/>
     </xsl:template>
     <xsl:template match="xhtml:a">
-        <ref target="{@href}">
-            <xsl:apply-templates />
-        </ref>
+        <xsl:if test="normalize-space(.)">
+            <ref target="{@href}">
+                <xsl:apply-templates />
+            </ref>
+        </xsl:if>
     </xsl:template>
 
     <xsl:template match="xhtml:br"/>

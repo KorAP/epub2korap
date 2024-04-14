@@ -9,14 +9,17 @@
 
     <xsl:mode on-no-match="shallow-copy"/>
 
+    <xsl:template match="p[not(normalize-space())]" priority="1.0"/>
 
-    <xsl:template match="p[descendant::div|descendant::p]" priority="1.0">
+    <xsl:template match="div[not(normalize-space())]" priority="1.0"/>
+
+    <xsl:template match="p[descendant::div|descendant::p]" priority="0.9">
         <div type="section">
             <xsl:apply-templates/>
         </div>
     </xsl:template>
 
-    <xsl:template match="(ref|emph|hi|text())[parent::div]" priority="1.0">
+    <xsl:template match="(ref|emph|hi|text())[parent::div]" priority="0.9">
         <p>
             <xsl:apply-templates/>
         </p>
