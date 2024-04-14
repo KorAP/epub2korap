@@ -23,8 +23,13 @@ index: $(TARGET_DIR)/dnb$(YY).index.tar.xz
 
 
 $(TARGET_DIR)/dnb$(YY).i5.xml: $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*.epub))
+	echo "$^" | sed -e 's/ /\n/g' > $(TARGET_DIR)/filelist$(YY).txt
 	head -n -1 xslt/idsCorpus-template.xml | sed -e 's/{YY}/$(YY)/' > $@
-	for f in $^; do if head -500 $$f | grep -Eq '<pubDate type="year">..$(YY)'; then cat $$f >> $@; fi; done
+	@while IFS= read -r f; do \
+		if head -500 "$$f" | grep -Eq '<pubDate type="year">..$(YY)'; then \
+			cat "$$f" >> $@; \
+		fi; \
+	done < $(TARGET_DIR)/filelist$(YY).txt
 	tail -n 1 xslt/idsCorpus-template.xml  >> $@
 
 test: $(TARGET_DIR)/dnb$(YY).i5.xml
