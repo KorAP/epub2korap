@@ -387,6 +387,9 @@
 
     <xsl:template match="xhtml:div[not(normalize-space(replace(., '&#160;', ' ')))]" priority="1.0"/>
 
+    <xsl:template match="xhtml:body/xhtml:div[./xhtml:h1|./xhtml:h2|./xhtml:h3]" priority="1.0">
+        <xsl:apply-templates/>
+    </xsl:template>
     <xsl:template match="xhtml:div/xhtml:div">
         <p>
             <xsl:apply-templates/>
