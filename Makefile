@@ -7,6 +7,8 @@ DEPLOY_PATH ?= /export/netapp/korap4dnb
 MAX_THREADS ?= $(shell nproc)
 YY ?= 18
 MAKE ?= make -j $(shell nproc)
+KORAPXML2CONLLU ?= java -jar lib/korapxml2conllu.jar
+SAXON ?= java -cp lib/saxon9ee.jar:lib/xml-resolver-1.2.jar net.sf.saxon.Transform -catalog:lib/dtds/xhtml11/xhtmlcatalog.xml
 
 .PHONY: all clean test i5 i5valid krill index deploy server-log server-status
 
@@ -19,7 +21,6 @@ all: index
 krill: $(TARGET_DIR)/dnb$(YY).krill.tar
 index: $(TARGET_DIR)/dnb$(YY).index.tar.xz
 
-KORAPXML2CONLLU ?= java -jar lib/korapxml2conllu.jar
 
 $(TARGET_DIR)/dnb$(YY).i5.xml: $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*.epub))
 	head -n -1 xslt/idsCorpus-template.xml | sed -e 's/{YY}/$(YY)/' > $@
@@ -44,7 +45,7 @@ $(BUILD_DIR)/%: $(SRC_DIR)/%.epub
 $(TARGET_DIR)/%.i5.xml: $(BUILD_DIR)/% xslt/epub2i5.xsl xslt/idsCorpus-template.xml
 	mkdir -p $(TARGET_DIR)
 	echo "Converting $< to $@"
-	java -jar lib/saxon9ee.jar -xsl:xslt/epub2i5.xsl $(shell find $< -name "*.opf") > $@
+	$(SAXON) -xsl:xslt/epub2i5.xsl $(shell find $< -name "*.opf") > $@
 
 %.zip: %.i5.xml
 	tei2korapxml -l warn -s -tk - < $< > $@
