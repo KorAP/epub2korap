@@ -21,8 +21,11 @@ all: index
 krill: $(TARGET_DIR)/dnb$(YY).krill.tar
 index: $(TARGET_DIR)/dnb$(YY).index.tar.xz
 
+$(TARGET_DIR)/dnb$(YY).i5.xml: $(TARGET_DIR)/dnb$(YY).pre.i5.xml
+	$(SAXON) -xsl:xslt/pass2.xsl $< | $(SAXON) -xsl:xslt/pass3.xsl - > $@
 
-$(TARGET_DIR)/dnb$(YY).i5.xml: $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*.epub))
+
+$(TARGET_DIR)/dnb$(YY).pre.i5.xml: $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*.epub))
 	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*0.epub)) > $(TARGET_DIR)/filelist$(YY).txt
 	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*1.epub)) >> $(TARGET_DIR)/filelist$(YY).txt
 	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*2.epub)) >> $(TARGET_DIR)/filelist$(YY).txt
@@ -33,7 +36,7 @@ $(TARGET_DIR)/dnb$(YY).i5.xml: $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.x
 	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*7.epub)) >> $(TARGET_DIR)/filelist$(YY).txt
 	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*8.epub)) >> $(TARGET_DIR)/filelist$(YY).txt
 	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*9.epub)) >> $(TARGET_DIR)/filelist$(YY).txt
-	sed -i -e 's/ /\n/g' $(TARGET_DIR)/filelist$(YY).txt
+	sed -i -e 's/ /\n/g; /^$$/d' $(TARGET_DIR)/filelist$(YY).txt
 	head -n -1 xslt/idsCorpus-template.xml | sed -e 's/{YY}/$(YY)/' > $@
 	@while IFS= read -r f; do \
 		if head -500 "$$f" | grep -Eq '<pubDate type="year">..$(YY)'; then \
@@ -60,7 +63,7 @@ $(BUILD_DIR)/%: $(SRC_DIR)/%.epub
 $(TARGET_DIR)/%.i5.xml: $(BUILD_DIR)/% xslt/epub2i5.xsl xslt/idsCorpus-template.xml
 	mkdir -p $(TARGET_DIR)
 	echo "Converting $< to $@"
-	$(SAXON) -xsl:xslt/epub2i5.xsl $(shell find $< -name "*.opf") | $(SAXON) -xsl:xslt/unnest_p.xsl - > $@
+	$(SAXON) -xsl:xslt/epub2i5.xsl $(shell find $< -name "*.opf") > $@
 
 %.zip: %.i5.xml
 	tei2korapxml -l warn -s -tk - < $< > $@
