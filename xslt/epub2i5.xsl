@@ -72,6 +72,8 @@
         </xsl:choose>
     </xsl:variable>
 
+    <xsl:variable name="erscheinungsland" select="ids:country-city($erscheinungsort)"/>
+
     <xsl:variable name="texttype" select="replace(($dnbBookdata//dc:subject[matches(., '^[A-Z] ')])[1], '^[A-Z] (.*)', '$1')"/>
 
     <xsl:variable name="verlag">
@@ -272,7 +274,7 @@
                                         <pubDate type="year"><xsl:value-of select="$j"/></pubDate>
                                         <pubDate type="month"/>
                                         <pubDate type="day"/>
-                                        <pubPlace key="DE"><xsl:value-of select="$erscheinungsort"/></pubPlace>
+                                        <pubPlace key="{$erscheinungsland}"><xsl:value-of select="$erscheinungsort"/></pubPlace>
                                     </imprint>
                                     <biblScope type="subsume"/>
                                     <biblScope type="pp"/>
@@ -499,4 +501,53 @@
             />
     </xsl:function>
 
+    <xsl:variable name="city-country-mapping">
+        <cities>
+            <country city="Axams">AT</country>
+            <country city="Vienna">AT</country>
+            <country city="Klagenfurt">AT</country>
+            <country city="Graz">AT</country>
+            <country city="Innsbruck">AT</country>
+            <country city="Salzburg">AT</country>
+            <country city="Bern">CH</country>
+            <country city="Biel/Bienne">CH</country>
+            <country city="Zurich">CH</country>
+            <country city="Basel">CH</country>
+            <country city="Geneva">CH</country>
+            <country city="Lucerne">CH</country>
+            <country city="Lausanne">CH</country>
+            <country city="Winterthur">CH</country>
+            <country city="St. Gallen">CH</country>
+            <country city="Interlaken">CH</country>
+            <country city="Brussels">BE</country>
+            <country city="Antwerp">BE</country>
+            <country city="Ghent">BE</country>
+            <country city="Bruges">BE</country>
+            <country city="Leuven">BE</country>
+            <country city="Liege">BE</country>
+            <country city="Charleroi">BE</country>
+            <country city="Namur">BE</country>
+            <country city="Mons">BE</country>
+            <country city="Bangkok">TH</country>
+            <country city="Copenhagen">DK</country>
+            <country city="colatina">BR</country>
+            <country city="Oakland Park">US</country>
+            <country city="Istanbul">TR</country>
+            <country city="Luxemburg">LU</country>
+            <country city="Palma de Mallorca">ES</country>
+            <country city="Swakopmund">NA</country>
+            <country city="Victoria">CA</country>
+            <country city="Wien">AT</country>
+            <country city="Windhoek">NA</country>
+            <country city="Zuerich">CH</country>
+            <country city="Zürich">CH</country>
+            <country city="Zug">CH</country>
+            <country city="ZÜRICH">CH</country>
+        </cities>
+    </xsl:variable>
+
+    <xsl:function name="ids:country-city" as="xs:string">
+        <xsl:param name="city"/>
+        <xsl:value-of select="if ($city-country-mapping/cities/country[@city = $city]) then $city-country-mapping/cities/country[@city = $city] else 'DE'"/>
+    </xsl:function>
 </xsl:stylesheet>
