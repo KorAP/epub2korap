@@ -86,14 +86,7 @@
     </xsl:variable>
 
     <xsl:variable name="erscheinungsjahr">
-        <xsl:choose>
-            <xsl:when test="dnbBookdata//dc:date[matches(normalize-space(.), '^[0-9]{4}$')]">
-                <xsl:value-of select="($dnbBookdata//dc:date[matches(normalize-space(.), '^[0-9]{4}$')])[1]"/>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:value-of select="substring-before(($dnbBookdata//dc:date)[1], '-')"/>
-            </xsl:otherwise>
-        </xsl:choose>
+        <xsl:value-of select="replace(($dnbBookdata//dc:date)[1], '.*?((19|20)[0-9][0-9]).*', '$1')"/>
     </xsl:variable>
 
     <xsl:variable name="untertitel"
@@ -113,7 +106,7 @@
     <xsl:variable name="straight_herausgeber"
         select="replace(hlu:reversedAuthors($herausgeber), ',', '')"/>
 
-    <xsl:variable name="j" select="$dnbBookdata//dc:date"/>
+    <xsl:variable name="j" select="$erscheinungsjahr"/>
 
     <!-- for BOT+s: -->
     <xsl:variable name="seiten" select="replace($dnbBookdata//dc:format,'S\.','')"/>
