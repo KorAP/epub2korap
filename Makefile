@@ -23,7 +23,17 @@ index: $(TARGET_DIR)/dnb$(YY).index.tar.xz
 
 
 $(TARGET_DIR)/dnb$(YY).i5.xml: $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*.epub))
-	echo "$^" | sed -e 's/ /\n/g' > $(TARGET_DIR)/filelist$(YY).txt
+	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*0.epub)) > $(TARGET_DIR)/filelist$(YY).txt
+	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*1.epub)) >> $(TARGET_DIR)/filelist$(YY).txt
+	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*2.epub)) >> $(TARGET_DIR)/filelist$(YY).txt
+	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*3.epub)) >> $(TARGET_DIR)/filelist$(YY).txt
+	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*4.epub)) >> $(TARGET_DIR)/filelist$(YY).txt
+	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*5.epub)) >> $(TARGET_DIR)/filelist$(YY).txt
+	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*6.epub)) >> $(TARGET_DIR)/filelist$(YY).txt
+	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*7.epub)) >> $(TARGET_DIR)/filelist$(YY).txt
+	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*8.epub)) >> $(TARGET_DIR)/filelist$(YY).txt
+	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*9.epub)) >> $(TARGET_DIR)/filelist$(YY).txt
+	sed -i -e 's/ /\n/g' $(TARGET_DIR)/filelist$(YY).txt
 	head -n -1 xslt/idsCorpus-template.xml | sed -e 's/{YY}/$(YY)/' > $@
 	@while IFS= read -r f; do \
 		if head -500 "$$f" | grep -Eq '<pubDate type="year">..$(YY)'; then \
