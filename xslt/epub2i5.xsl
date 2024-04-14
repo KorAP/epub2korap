@@ -6,7 +6,8 @@
                 xmlns:hlu="http://www.ids-mannheim.de/hlu"
                 xmlns:saxon="http://saxon.sf.net/"
                 xmlns:xhtml="http://www.w3.org/1999/xhtml"
-                exclude-result-prefixes="xs opf dc ids hlu saxon xhtml">
+                xmlns:map="http://www.w3.org/2005/xpath-functions/map"
+                exclude-result-prefixes="xs opf dc ids hlu map saxon xhtml">
 
     <xsl:output method="xml" indent="yes" omit-xml-declaration="yes" saxon:line-length="1000"/>
     <xsl:strip-space elements="*"/>
@@ -501,53 +502,55 @@
             />
     </xsl:function>
 
-    <xsl:variable name="city-country-mapping">
-        <cities>
-            <country city="Axams">AT</country>
-            <country city="Vienna">AT</country>
-            <country city="Klagenfurt">AT</country>
-            <country city="Graz">AT</country>
-            <country city="Innsbruck">AT</country>
-            <country city="Salzburg">AT</country>
-            <country city="Bern">CH</country>
-            <country city="Biel/Bienne">CH</country>
-            <country city="Zurich">CH</country>
-            <country city="Basel">CH</country>
-            <country city="Geneva">CH</country>
-            <country city="Lucerne">CH</country>
-            <country city="Lausanne">CH</country>
-            <country city="Winterthur">CH</country>
-            <country city="St. Gallen">CH</country>
-            <country city="Interlaken">CH</country>
-            <country city="Brussels">BE</country>
-            <country city="Antwerp">BE</country>
-            <country city="Ghent">BE</country>
-            <country city="Bruges">BE</country>
-            <country city="Leuven">BE</country>
-            <country city="Liege">BE</country>
-            <country city="Charleroi">BE</country>
-            <country city="Namur">BE</country>
-            <country city="Mons">BE</country>
-            <country city="Bangkok">TH</country>
-            <country city="Copenhagen">DK</country>
-            <country city="colatina">BR</country>
-            <country city="Oakland Park">US</country>
-            <country city="Istanbul">TR</country>
-            <country city="Luxemburg">LU</country>
-            <country city="Palma de Mallorca">ES</country>
-            <country city="Swakopmund">NA</country>
-            <country city="Victoria">CA</country>
-            <country city="Wien">AT</country>
-            <country city="Windhoek">NA</country>
-            <country city="Zuerich">CH</country>
-            <country city="Zürich">CH</country>
-            <country city="Zug">CH</country>
-            <country city="ZÜRICH">CH</country>
-        </cities>
-    </xsl:variable>
+  <xsl:variable name="city-country-map" as="map(xs:string, xs:string)">
+    <xsl:map>
+      <xsl:map-entry key="'Axams'" select="'AT'"/>
+      <xsl:map-entry key="'Vienna'" select="'AT'"/>
+      <xsl:map-entry key="'Klagenfurt'" select="'AT'"/>
+      <xsl:map-entry key="'Graz'" select="'AT'"/>
+      <xsl:map-entry key="'Innsbruck'" select="'AT'"/>
+      <xsl:map-entry key="'Salzburg'" select="'AT'"/>
+      <xsl:map-entry key="'Bern'" select="'CH'"/>
+      <xsl:map-entry key="'Biel/Bienne'" select="'CH'"/>
+      <xsl:map-entry key="'Zurich'" select="'CH'"/>
+      <xsl:map-entry key="'Basel'" select="'CH'"/>
+      <xsl:map-entry key="'Geneva'" select="'CH'"/>
+      <xsl:map-entry key="'Lucerne'" select="'CH'"/>
+      <xsl:map-entry key="'Lausanne'" select="'CH'"/>
+      <xsl:map-entry key="'Winterthur'" select="'CH'"/>
+      <xsl:map-entry key="'St. Gallen'" select="'CH'"/>
+      <xsl:map-entry key="'Interlaken'" select="'CH'"/>
+      <xsl:map-entry key="'Brussels'" select="'BE'"/>
+      <xsl:map-entry key="'Antwerp'" select="'BE'"/>
+      <xsl:map-entry key="'Ghent'" select="'BE'"/>
+      <xsl:map-entry key="'Bruges'" select="'BE'"/>
+      <xsl:map-entry key="'Leuven'" select="'BE'"/>
+      <xsl:map-entry key="'Liege'" select="'BE'"/>
+      <xsl:map-entry key="'Charleroi'" select="'BE'"/>
+      <xsl:map-entry key="'Namur'" select="'BE'"/>
+      <xsl:map-entry key="'Mons'" select="'BE'"/>
+      <xsl:map-entry key="'Bangkok'" select="'TH'"/>
+      <xsl:map-entry key="'Copenhagen'" select="'DK'"/>
+      <xsl:map-entry key="'colatina'" select="'BR'"/>
+      <xsl:map-entry key="'Oakland Park'" select="'US'"/>
+      <xsl:map-entry key="'Istanbul'" select="'TR'"/>
+      <xsl:map-entry key="'Luxemburg'" select="'LU'"/>
+      <xsl:map-entry key="'Palma de Mallorca'" select="'ES'"/>
+      <xsl:map-entry key="'Swakopmund'" select="'NA'"/>
+      <xsl:map-entry key="'Victoria'" select="'CA'"/>
+      <xsl:map-entry key="'Wien'" select="'AT'"/>
+      <xsl:map-entry key="'Windhoek'" select="'NA'"/>
+      <xsl:map-entry key="'Zuerich'" select="'CH'"/>
+      <xsl:map-entry key="'Zürich'" select="'CH'"/>
+      <xsl:map-entry key="'Zug'" select="'CH'"/>
+      <xsl:map-entry key="'ZÜRICH'" select="'CH'"/>
+    </xsl:map>
 
-    <xsl:function name="ids:country-city" as="xs:string">
-        <xsl:param name="city"/>
-        <xsl:value-of select="if ($city-country-mapping/cities/country[@city = $city]) then $city-country-mapping/cities/country[@city = $city] else 'DE'"/>
-    </xsl:function>
+  </xsl:variable>
+
+  <!-- Define the function -->
+  <xsl:function name="ids:country-city" as="xs:string">
+    <xsl:param name="city" as="xs:string"/>
+    <xsl:sequence select="if (map:contains($city-country-map, $city)) then map:get($city-country-map, $city) else 'DE'"/>
+  </xsl:function>
 </xsl:stylesheet>
