@@ -37,4 +37,6 @@
         </p>
     </xsl:template>
 
+    <xsl:template match="p[normalize-space(.) = '&#160;']"/>
+
 </xsl:stylesheet>
