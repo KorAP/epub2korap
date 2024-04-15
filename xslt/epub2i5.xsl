@@ -360,6 +360,10 @@
         </hi>
     </xsl:template>
 
+    <xsl:template match="xhtml:span[matches(@class, 'regular')]">
+        <xsl:apply-templates/>
+    </xsl:template>
+
     <xsl:template match="xhtml:b">
         <hi rend="bold">
             <xsl:apply-templates/>
