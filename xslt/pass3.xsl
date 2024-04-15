@@ -18,5 +18,20 @@
         </p>
     </xsl:template>
     
+    <xsl:template match="(ref|emph|hi|text())[parent::div]" priority="0.9">
+        <p>
+            <xsl:apply-templates/>
+        </p>
+    </xsl:template>
 
+    <xsl:template match="hi[local-name(preceding-sibling::*[1]) = 'hi' and @rend = preceding-sibling::hi[1]/@rend]"/>
+
+    <xsl:template match="hi[following-sibling::hi and not(preceding-sibling::hi)]">
+        <xsl:variable name="rend" select="@rend"/>
+        <hi rend="{$rend}">
+            <xsl:for-each-group select="self|following-sibling::hi" group-adjacent="@rend=$rend">
+                <xsl:value-of select="current-group()"/>
+            </xsl:for-each-group>
+        </hi>
+    </xsl:template>
 </xsl:stylesheet>
