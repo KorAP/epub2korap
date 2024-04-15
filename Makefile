@@ -21,7 +21,7 @@ all: index
 krill: $(TARGET_DIR)/dnb$(YY).krill.tar
 index: $(TARGET_DIR)/dnb$(YY).index.tar.xz
 
-$(TARGET_DIR)/dnb$(YY).i5.xml: $(TARGET_DIR)/dnb$(YY).pre.i5.xml
+$(TARGET_DIR)/dnb$(YY).i5.xml: $(TARGET_DIR)/dnb$(YY).pre.i5.xml  xslt/pass2.xsl xslt/pass3.xsl
 	$(SAXON) -xsl:xslt/pass2.xsl $< | $(SAXON) -xsl:xslt/pass3.xsl - > $@
 
 
