@@ -1,13 +1,21 @@
+# Change the SRC_DIR to the directory containing the DNB EPUB files, e.g. with 
+# make -j 96 target/dnb13.index.tar.xz SRC_DIR=../sample.10000
+
 SRC_DIR ?= test/resources/DNB
+
+# Change YEARS to the years you want to process, e.g. with 
+# make -j12 i5valid YEARS="18 19"
+
+YEARS ?= $(shell seq -w 1998 2024 | sed 's/^.*\([0-9][0-9]\)/\1/')
+
 BUILD_DIR = build
 TARGET_DIR ?= target
 DEPLOY_HOST ?= compute.ids-mannheim.de
 DEPLOY_USER ?= korap
 DEPLOY_PATH ?= /export/netapp/korap4dnb
 MAX_THREADS ?= $(shell nproc)
-YY ?= 18
 MAKE ?= make -j $(shell nproc)
-KORAPXML2CONLLU_HEAP ?= $(shell echo "$$(($$(nproc) * 1625))")
+KORAPXML2CONLLU_HEAP ?= $(shell echo "$$(($(MAX_THREADS) * 1625))")
 KORAPXML2CONLLU ?= java -Xmx$(KORAPXML2CONLLU_HEAP)m -jar lib/korapxml2conllu.jar
 SAXON ?= java -cp lib/saxon9ee.jar:lib/xml-resolver-1.2.jar net.sf.saxon.Transform -expand:off -catalog:"lib/dtds/xhtml11/xhtmlcatalog.xml;lib/dtds/xhtml/dtd/xhtmlcatalog.xml"
 
@@ -19,41 +27,40 @@ SAXON ?= java -cp lib/saxon9ee.jar:lib/xml-resolver-1.2.jar net.sf.saxon.Transfo
 
 all: index
 
-krill: $(TARGET_DIR)/dnb$(YY).krill.tar
-index: $(TARGET_DIR)/dnb$(YY).index.tar.xz
+krill: $(foreach year,$(YEARS),$(TARGET_DIR)/dnb$(year).krill.tar)
 
-$(TARGET_DIR)/dnb$(YY).i5.xml: $(TARGET_DIR)/dnb$(YY).pre.i5.xml  xslt/pass2.xsl xslt/pass3.xsl
+index: $(foreach year,$(YEARS),$(TARGET_DIR)/dnb$(year).index.tar.xz)
+
+$(TARGET_DIR)/dnb%.i5.xml: $(TARGET_DIR)/dnb%.pre.i5.xml  xslt/pass2.xsl xslt/pass3.xsl
 	$(SAXON) -xsl:xslt/pass2.xsl $< | $(SAXON) -xsl:xslt/pass3.xsl - > $@
 
 
-$(TARGET_DIR)/dnb$(YY).pre.i5.xml: $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*.epub))
-	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*0.epub)) > $(TARGET_DIR)/filelist$(YY).txt
-	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*1.epub)) >> $(TARGET_DIR)/filelist$(YY).txt
-	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*2.epub)) >> $(TARGET_DIR)/filelist$(YY).txt
-	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*3.epub)) >> $(TARGET_DIR)/filelist$(YY).txt
-	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*4.epub)) >> $(TARGET_DIR)/filelist$(YY).txt
-	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*5.epub)) >> $(TARGET_DIR)/filelist$(YY).txt
-	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*6.epub)) >> $(TARGET_DIR)/filelist$(YY).txt
-	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*7.epub)) >> $(TARGET_DIR)/filelist$(YY).txt
-	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*8.epub)) >> $(TARGET_DIR)/filelist$(YY).txt
-	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*9.epub)) >> $(TARGET_DIR)/filelist$(YY).txt
-	sed -i -e 's/ /\n/g; /^$$/d' $(TARGET_DIR)/filelist$(YY).txt
-	head -n -1 xslt/idsCorpus-template.xml | sed -e 's/{YY}/$(YY)/' > $@
+$(TARGET_DIR)/dnb%.pre.i5.xml: $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*.epub))
+	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*0.epub)) > $(TARGET_DIR)/filelist$*.txt
+	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*1.epub)) >> $(TARGET_DIR)/filelist$*.txt
+	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*2.epub)) >> $(TARGET_DIR)/filelist$*.txt
+	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*3.epub)) >> $(TARGET_DIR)/filelist$*.txt
+	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*4.epub)) >> $(TARGET_DIR)/filelist$*.txt
+	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*5.epub)) >> $(TARGET_DIR)/filelist$*.txt
+	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*6.epub)) >> $(TARGET_DIR)/filelist$*.txt
+	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*7.epub)) >> $(TARGET_DIR)/filelist$*.txt
+	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*8.epub)) >> $(TARGET_DIR)/filelist$*.txt
+	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*9.epub)) >> $(TARGET_DIR)/filelist$*.txt
+	sed -i -e 's/ /\n/g; /^$$/d' $(TARGET_DIR)/filelist$*.txt
+	head -n -1 xslt/idsCorpus-template.xml | sed -e 's/{YY}/$*/' > $@
 	@while IFS= read -r f; do \
-		if head -500 "$$f" | grep -Eq '<pubDate type="year">..$(YY)'; then \
+		if head -500 "$$f" | grep -Eq '<pubDate type="year">..$*'; then \
 			cat "$$f" >> $@; \
 		fi; \
-	done < $(TARGET_DIR)/filelist$(YY).txt
+	done < $(TARGET_DIR)/filelist$*.txt
 	tail -n 1 xslt/idsCorpus-template.xml  >> $@
 
-test: $(TARGET_DIR)/dnb$(YY).i5.xml
-	xmllint --noout --valid $<
+test: i5valid
 
-i5: $(TARGET_DIR)/dnb$(YY).i5.xml
-	xmllint --noout $<
+i5: $(foreach year,$(YEARS),$(TARGET_DIR)/dnb$(year).i5.xml)
 
-i5valid: $(TARGET_DIR)/dnb$(YY).i5.xml
-	xmllint --noout --valid $<
+i5valid: i5
+	xmllint --noout --valid $(foreach year,$(YEARS),$(TARGET_DIR)/dnb$(year).i5.xml)
 
 $(BUILD_DIR)/%: $(SRC_DIR)/%.epub
 	mkdir -p $@
@@ -84,7 +91,7 @@ models/german.mco:
 	curl -sL -o $@  https://corpora.ids-mannheim.de/tools/$@
 
 %.marmot-malt.zip: %.zip models/de.marmot models/german.mco
-	$(KORAPXML2CONLLU) -T $(MAX_THREADS) -t marmot:models/de.marmot -P malt:models/german.mco $< | tee $(TARGET_DIR)/dnb$(YY).marmot-malt.conllu | conllu2korapxml > $@
+	$(KORAPXML2CONLLU) -T $(MAX_THREADS) -t marmot:models/de.marmot -P malt:models/german.mco $< | conllu2korapxml > $@
 
 %.ud.zip: %.zip
 	$(KORAPXML2CONLLU) $< | pv | ./scripts/udpipe2 | conllu2korapxml > $@
@@ -118,13 +125,3 @@ show-server-status:
 
 clean:
 	rm -rf $(BUILD_DIR) $(TARGET_DIR)
-
-alli5: i5
-	for yy in $(shell seq -f "%02.f" 95 99) $(shell seq -f "%02.f" 0 24); do \
-	    $(MAKE) i5 YY=$$yy; \
-	done
-
-allindex: i5
-	for yy in $(shell seq -f "%02.f" 95 99) $(shell seq -f "%02.f" 0 24); do \
-	    $(MAKE) index YY=$$yy & \
-	done
