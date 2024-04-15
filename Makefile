@@ -89,8 +89,9 @@ models/german.mco:
 	$(KORAPXML2CONLLU) $< | pv | ./scripts/udpipe2 | conllu2korapxml > $@
 
 %.krill.tar: %.zip %.marmot-malt.zip %.tree_tagger.zip %.spacy.zip
+	mkdir -p ${BUILD_DIR}/krill/$(basename $@)
 	mkdir -p $(basename $@)
-	korapxml2krill archive --quiet -w -z -cfg krill-korap4dnb.cfg --non-word-tokens --meta I5 -i $< -i $(word 2,$^) -i $(word 3,$^) -i $(word 4,$^) -o $(basename $@)
+	korapxml2krill archive --quiet -w -z -cfg krill-korap4dnb.cfg -c ${BUILD_DIR}/krill/$(basename $@)/korapxml2krill.cache -j $(MAX_THREADS) -te ${BUILD_DIR}/krill/$(basename $@) --non-word-tokens --meta I5 -i $< -i $(word 2,$^) -i $(word 3,$^) -i $(word 4,$^) -o $(basename $@)
 
 %.json: %.krill.tar
 	rm -rf $@
@@ -117,7 +118,12 @@ show-server-status:
 clean:
 	rm -rf $(BUILD_DIR) $(TARGET_DIR)
 
-alli5:
+alli5: i5
 	for yy in $(shell seq -f "%02.f" 95 99) $(shell seq -f "%02.f" 0 24); do \
 	    $(MAKE) i5 YY=$$yy; \
+	done
+
+allindex: i5
+	for yy in $(shell seq -f "%02.f" 95 99) $(shell seq -f "%02.f" 0 24); do \
+	    $(MAKE) index YY=$$yy & \
 	done
