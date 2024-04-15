@@ -30,7 +30,7 @@ build-and-test-i5:
 
   script:
     - start_section checking_i5 "Building and testing I5 files"
-    - make -j $(nproc) test
+    - make -j $(nproc) test YEARS=18
     - end_section checking_i5
 
 
