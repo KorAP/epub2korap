@@ -29,7 +29,7 @@ all: index
 
 krill: $(foreach year,$(YEARS),$(TARGET_DIR)/dnb$(year).krill.tar)
 
-index: $(foreach year,$(YEARS),$(TARGET_DIR)/dnb$(year).index.tar.xz)
+index: $(TARGET_DIR)/dnb.index
 
 $(TARGET_DIR)/dnb%.i5.xml: $(TARGET_DIR)/dnb%.pre.i5.xml  xslt/pass2.xsl xslt/pass3.xsl
 	$(SAXON) -xsl:xslt/pass2.xsl $< | $(SAXON) -xsl:xslt/pass3.xsl - > $@
@@ -106,11 +106,11 @@ models/german.mco:
 	mkdir -p $@
 	for f in $<; do tar -C $@ -xf $$f; done
 
-%.index: %.json
+$(TARGET_DIR)/dnb.index: $(foreach year,$(YEARS),$(TARGET_DIR)/dnb$(year).json)
 	rm -rf $@
-	java -jar lib/Krill-Indexer.jar -c lib/krill.conf -i $< -o $@
+	java -jar lib/Krill-Indexer.jar -c lib/krill.conf -i $(subst " ",;,$^) -o $@
 
-%.index.tar.xz: %.index
+$(TARGET_DIR)/dnb.index.tar.xz: $(TARGET_DIR)/dnb.index
 	tar -I 'xz -T0' -C $(dir $<) -cf $@ $(notdir $<)
 
 deploy: $(TARGET_DIR)/dnb.index.tar.xz korap4dnb-compose.yml
