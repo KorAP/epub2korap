@@ -12,7 +12,7 @@
     <xsl:template match="idsDoc[not(normalize-space(.//body))]"/>
     
     <xsl:template match="idsText[not(normalize-space(.//body))]"/>
-    <xsl:template match="hi[parent::div]">
+    <xsl:template match="hi[parent::div]" priority="0.6">
         <p>
             <xsl:apply-templates/>
         </p>
