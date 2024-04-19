@@ -8,6 +8,8 @@ variables:
   VID: $VID
   DEBIAN_FRONTEND: noninteractive
   APT_CACHE_DIR: apt-cache
+  SRC_DIR: test/resources/DNB
+  YEARS: 18
 
 build-and-test-i5:
   stage: test
@@ -63,9 +65,6 @@ build-index:
           - target/dnb18.marmot-malt.zip
           - target/dnb18.spacy.zip
           - target/dnb18.krill.tar
-  variables:
-    SRC_DIR: test/resources/DNB
-    YEARS: 18
 
   before_script:
     - source `find .. -name section_helper.sh`
