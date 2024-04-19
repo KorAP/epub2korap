@@ -222,6 +222,10 @@
         select="concat($straight_autor, ': ', $titel, ' (',  $erscheinungsjahr, ')')"/>
 
     <xsl:template match="/">
+        <xsl:if test="not($j)">
+            <xsl:message terminate="yes">ERROR: No dc:date found for ISBN: <xsl:value-of select="$isbn"/></xsl:message>
+        </xsl:if>
+
         <idsDoc TEIform="TEI.2" type="text" version="1.0">
             <idsHeader TEIform="teiHeader" pattern="text" status="new" type="document" version="1.1">
                 <fileDesc>
