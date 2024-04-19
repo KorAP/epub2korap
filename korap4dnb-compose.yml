@@ -5,7 +5,7 @@ services:
   kalamar:
     image: "korap/kalamar:dnb"
     ports:
-      - "64543:64543"
+      - "80:64543"
     environment:
       KALAMAR_API: "http://kustvakt:8089/api/"
     depends_on:
