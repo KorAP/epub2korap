@@ -364,13 +364,13 @@
         <xsl:apply-templates/>
     </xsl:template>
 
-    <xsl:template match="xhtml:b">
+    <xsl:template match="xhtml:b|xhtml:span[class='b']">
         <hi rend="bold">
             <xsl:apply-templates/>
         </hi>
     </xsl:template>
 
-     <xsl:template match="xhtml:i">
+     <xsl:template match="xhtml:i|xhtml:span[class='i']">
         <hi rend="italic">
             <xsl:apply-templates/>
         </hi>
