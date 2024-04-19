@@ -226,6 +226,10 @@
             <xsl:message terminate="yes">ERROR: No dc:date found for ISBN: <xsl:value-of select="$isbn"/></xsl:message>
         </xsl:if>
 
+        <xsl:if test="not(normalize-space($titel))">
+            <xsl:message terminate="yes">ERROR: No title found for ISBN: <xsl:value-of select="$isbn"/></xsl:message>
+        </xsl:if>
+
         <idsDoc TEIform="TEI.2" type="text" version="1.0">
             <idsHeader TEIform="teiHeader" pattern="text" status="new" type="document" version="1.1">
                 <fileDesc>
