@@ -15,7 +15,7 @@
     <xsl:variable name="ev"/>
     <xsl:variable name="x"/>
 
-    <xsl:variable name="isbn" as="xs:string" select="replace(document-uri(), '.*([0-9]{13,}).*' , '$1')"/>
+    <xsl:variable name="isbn" as="xs:string" select="replace(document-uri(), '.*/([0-9]{9,13}X?).*' , '$1')"/>
 
 
     <xsl:variable name="dnbBookdata">
