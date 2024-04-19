@@ -169,7 +169,7 @@
                     <xsl:matching-substring>
                         <xsl:choose>
                             <xsl:when
-                                test="matches(.,'^[A-Z]') and not(matches(.,'^(Der|Die|Das|Des|Ein|Eine|Eines|Einmal|Von|Mit|Zu|Zurck)$'))">
+                                test="matches(.,'^[A-Z]') and not(matches(.,'^(Der|Die|Das|Des|Ein|Eine|Eines|Einmal|Von|Mit|Zu|Zur)$'))">
                                 <!-- TODO: Fktnswoerter nachtragen -->
                                 <xsl:sequence select="."/>
                             </xsl:when>
