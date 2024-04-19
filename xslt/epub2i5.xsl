@@ -185,10 +185,10 @@
         <xsl:choose>
             <xsl:when test="contains($autor,';')">
                 <xsl:variable name="lastname_aut1"
-                    select="upper-case(substring(normalize-space(substring-before(substring-before($autor,';'),',')), 1, 1))"/>
+                     select="upper-case(substring(normalize-space($autor),1,1))"/>
                 <xsl:variable name="lastname_aut2"
-                    select="upper-case(substring(normalize-space(substring-before(substring-before(substring-after($autor, '; '),';'),',')), 1, 1))"/>
-                <xsl:value-of select="concat($lastname_aut1, $lastname_aut2)"/>
+                    select="replace($autor, '.*?;.*?([A-Z]).*', '$1')"/>
+                <xsl:value-of select="concat($lastname_aut1,  $lastname_aut2)"/>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:variable name="lastname_aut1"
