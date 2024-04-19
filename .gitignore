@@ -5,6 +5,7 @@
 cache/
 build/
 target/
+*.err
 *.log
 *_files/
 *.bak
@@ -12,3 +13,4 @@ json/
 .gitlab-ci-local/
 \#*
 models/
+dnb.index/
