@@ -1,12 +1,12 @@
 # Change the SRC_DIR to the directory containing the DNB EPUB files, e.g. with 
 # make -j 96 target/dnb13.index.tar.xz SRC_DIR=../sample.10000
 
-SRC_DIR ?= test/resources/DNB
+SRC_DIR ?= /mnt/data/KorAP@DNB/Random-10-12-23.epub
 
-# Change YEARS to the years you want to process, e.g. with 
+# Change YEARS to the years you want to process, e.g. with
 # make -j12 i5valid YEARS="18 19"
 
-YEARS ?= $(shell seq -w 1998 2024 | sed 's/^.*\([0-9][0-9]\)/\1/')
+YEARS ?= $(shell seq -w 2012 2024 | sed 's/^.*\([0-9][0-9]\)/\1/')
 
 BUILD_DIR = build
 TARGET_DIR ?= target

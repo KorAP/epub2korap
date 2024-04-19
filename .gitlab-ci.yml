@@ -63,6 +63,10 @@ build-index:
           - target/dnb18.marmot-malt.zip
           - target/dnb18.spacy.zip
           - target/dnb18.krill.tar
+  variables:
+    SRC_DIR: test/resources/DNB
+    YEARS: 18
+
   before_script:
     - source `find .. -name section_helper.sh`
     - start_section install_linux_packages "Installing missing Linux packages"
@@ -92,7 +96,7 @@ build-index:
     - touch target/*.zip # ignore timestamps in make
     - sleep 1
     - touch target/*.*.zip
-    - MAX_THREADS=2 make -j $(nproc) target/dnb18.index.tar.xz
+    - MAX_THREADS=2 make -j $(nproc) target/dnb.index.tar.xz
     - end_section building_krill
   artifacts:
     paths:
