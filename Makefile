@@ -46,6 +46,7 @@ $(TARGET_DIR)/dnb%.pre.i5.xml: $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.x
 	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*7.epub)) >> $(TARGET_DIR)/filelist$*.txt
 	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*8.epub)) >> $(TARGET_DIR)/filelist$*.txt
 	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*9.epub)) >> $(TARGET_DIR)/filelist$*.txt
+	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*X.epub)) >> $(TARGET_DIR)/filelist$*.txt
 	sed -i -e 's/ /\n/g; /^$$/d' $(TARGET_DIR)/filelist$*.txt
 	head -n -1 xslt/idsCorpus-template.xml | sed -e 's/{YY}/$*/' > $@
 	@while IFS= read -r f; do \
