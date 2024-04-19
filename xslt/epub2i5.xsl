@@ -202,7 +202,7 @@
     </xsl:variable>
 
 
-    <xsl:variable name="text_sigle" select="substring($isbn, 8, 5)"/>
+    <xsl:variable name="text_sigle" select="replace($isbn, '.*([0-9]{5})[0-9X]$', '$1')"/>
     <xsl:variable name="sigle" select="concat($corpus_sigle, '/', $doc_sigle, '.', $text_sigle)"/>
 
     <!-- fuer BOT+xy: (?) -->
