@@ -97,7 +97,7 @@ models/dereko_domains_s.classifier:
 	curl -sL -o $@ https://corpora.ids-mannheim.de/tools/$@
 
 %.marmot-malt.zip: %.zip models/de.marmot models/german.mco
-	$(KORAPXML2CONLLU) -T $(MAX_THREADS) -t marmot:models/de.marmot -P malt:models/german.mco $< | conllu2korapxml > $@
+	$(KORAPXML2CONLLU) -T $(MAX_THREADS) -t marmot:models/de.marmot -P malt:models/german.mco $< | conllu2korapxml -f "marmot dependency:malt" > $@
 
 %.ud.zip: %.zip
 	$(KORAPXML2CONLLU) $< | pv | ./scripts/udpipe2 | conllu2korapxml > $@
