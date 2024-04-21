@@ -32,7 +32,7 @@ krill: $(foreach year,$(YEARS),$(TARGET_DIR)/dnb$(year).krill.tar)
 
 index: $(TARGET_DIR)/dnb.index
 
-$(TARGET_DIR)/dnb%.i5.xml: $(TARGET_DIR)/dnb%.pre.i5.xml  xslt/pass2.xsl xslt/pass3.xsl
+$(TARGET_DIR)/dnb%.i5.xml: $(TARGET_DIR)/dnb%.pre.i5.xml  xslt/pass2.xsl xslt/pass3.xsl models/dereko_domains_s.classifier
 	$(SAXON) -xsl:xslt/pass2.xsl $< | $(SAXON) -xsl:xslt/pass3.xsl - > $@
 
 
