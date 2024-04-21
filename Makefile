@@ -17,7 +17,7 @@ MAX_THREADS ?= $(shell nproc)
 MAKE ?= make -j $(shell nproc)
 KORAPXML2CONLLU_HEAP ?= $(shell echo "$$(($(MAX_THREADS) * 2100))")
 KORAPXML2CONLLU ?= java -Xmx$(KORAPXML2CONLLU_HEAP)m -jar lib/korapxml2conllu.jar
-SAXON ?= java -cp lib/saxon9ee.jar:lib/xml-resolver-1.2.jar net.sf.saxon.Transform -expand:off -catalog:"lib/dtds/xhtml11/xhtmlcatalog.xml;lib/dtds/xhtml/dtd/xhtmlcatalog.xml"
+SAXON ?= java -cp lib/saxon9ee.jar:lib/xml-resolver-1.2.jar:lib/textclassifier.jar net.sf.saxon.Transform -expand:off -catalog:"lib/dtds/xhtml11/xhtmlcatalog.xml;lib/dtds/xhtml/dtd/xhtmlcatalog.xml"
 
 .DELETE_ON_ERROR:
 
@@ -91,6 +91,10 @@ models/de.marmot:
 models/german.mco:
 	mkdir -p models
 	curl -sL -o $@  https://corpora.ids-mannheim.de/tools/$@
+
+models/dereko_domains_s.classifier:
+	mkdir -p models
+	curl -sL -o $@ https://corpora.ids-mannheim.de/tools/$@
 
 %.marmot-malt.zip: %.zip models/de.marmot models/german.mco
 	$(KORAPXML2CONLLU) -T $(MAX_THREADS) -t marmot:models/de.marmot -P malt:models/german.mco $< | conllu2korapxml > $@
