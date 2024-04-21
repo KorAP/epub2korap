@@ -234,6 +234,10 @@
             <xsl:message terminate="yes">ERROR: No author found for ISBN: <xsl:value-of select="$isbn"/></xsl:message>
         </xsl:if>
 
+        <xsl:if test="not(matches($sigle, '^[A-Z]{3}[0-9]{2}/[A-Z]{3}\.[0-9]{5}$'))">
+            <xsl:message terminate="yes">ERROR: Strange sigle »<xsl:value-of select="$sigle"/>« for ISBN: <xsl:value-of select="$isbn"/></xsl:message>
+        </xsl:if>
+
         <idsDoc TEIform="TEI.2" type="text" version="1.0">
             <idsHeader TEIform="teiHeader" pattern="text" status="new" type="document" version="1.1">
                 <fileDesc>
@@ -442,7 +446,22 @@
         </xsl:if>
     </xsl:template>
 
-   <xsl:template match="xhtml:nav">
+    <xsl:template match="xhtml:ul">
+        <list type="unordered">
+            <xsl:apply-templates/>
+        </list>
+    </xsl:template>
+    <xsl:template match="xhtml:ol">
+        <list type="ordered">
+            <xsl:apply-templates/>
+        </list>
+    </xsl:template>
+    <xsl:template match="xhtml:li">
+        <item>
+            <xsl:apply-templates/>
+       </item>
+    </xsl:template>
+    <xsl:template match="xhtml:nav">
         <!-- <gap reason="toc"/>  -->
     </xsl:template>
 
@@ -454,6 +473,9 @@
         <!-- <gap reason="audio"/>  -->
     </xsl:template>
 
+    <xsl:template match="xhtml:table">
+        <!-- <gap reason="table"/>  -->
+    </xsl:template>
     <xsl:template match="xhtml:body/xhtml:a">
         <xsl:if test="normalize-space(.)">
             <p>
