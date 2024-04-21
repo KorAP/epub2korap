@@ -359,7 +359,7 @@
         </head>
     </xsl:template>
 
-    <xsl:template match="xhtml:h2|xhtml:h3">
+    <xsl:template match="xhtml:h2|xhtml:h3|xhtml:h4|xhtml:h5|xhtml:h6">
         <head type="sub">
             <xsl:apply-templates/>
         </head>
@@ -382,7 +382,7 @@
         <xsl:apply-templates/>
     </xsl:template>
 
-    <xsl:template match="xhtml:b|xhtml:span[@class='b']">
+    <xsl:template match="xhtml:b|xhtml:span[@class='b']|xhtml:strong">
         <hi rend="bold">
             <xsl:apply-templates/>
         </hi>
