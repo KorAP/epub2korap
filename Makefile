@@ -57,7 +57,7 @@ $(TARGET_DIR)/dnb%.pre.i5.xml: $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.x
 	done < $(TARGET_DIR)/filelist$*.txt
 	tail -n 1 xslt/idsCorpus-template.xml  >> $@
 
-test: i5valid
+test: models/dereko_domains_s.classifier i5valid
 
 i5: $(foreach year,$(YEARS),$(TARGET_DIR)/dnb$(year).i5.xml)
 
