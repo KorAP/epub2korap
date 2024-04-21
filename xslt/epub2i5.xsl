@@ -179,26 +179,28 @@
                 </xsl:analyze-string>
             </xsl:variable>
             <xsl:value-of
-                select="upper-case(substring(normalize-space(replace($helper,'\s+.+$','')),1,1))"/>
+                select="upper-case(substring(normalize-space(replace($helper,'\s+.+$','')),1,3))"/>
             <!-- longest match of .+  -->
         </xsl:variable>
-        <xsl:choose>
-            <xsl:when test="contains($autor,';')">
-                <xsl:variable name="lastname_aut1"
-                     select="upper-case(substring(normalize-space($autor),1,1))"/>
-                <xsl:variable name="lastname_aut2"
-                    select="replace($autor, '.*?;.*?([A-Z]).*', '$1')"/>
-                <xsl:value-of select="concat($lastname_aut1,  $lastname_aut2)"/>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:variable name="lastname_aut1"
-                    select="upper-case(substring(normalize-space(substring-before($autor,',')),1,1))"/>
-                <xsl:variable name="firstname_aut1"
-                    select="upper-case(substring(normalize-space(substring-after($autor,',')),1,1))"/>
-                <xsl:value-of select="concat($lastname_aut1, $firstname_aut1)"/>
-            </xsl:otherwise>
-        </xsl:choose>
-        <xsl:value-of select="$firstContentWordTitleInitial"/>
+        <xsl:variable name="authorInitials">
+            <xsl:choose>
+                <xsl:when test="contains($autor,';')">
+                    <xsl:variable name="lastname_aut1"
+                        select="upper-case(substring(normalize-space($autor),1,1))"/>
+                    <xsl:variable name="lastname_aut2"
+                        select="replace($autor, '.*?;.*?([A-Z]).*', '$1')"/>
+                    <xsl:value-of select="concat($lastname_aut1,  $lastname_aut2)"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:variable name="lastname_aut1"
+                        select="upper-case(substring(normalize-space(substring-before($autor,',')),1,1))"/>
+                    <xsl:variable name="firstname_aut1"
+                        select="upper-case(substring(normalize-space(substring-after($autor,',')),1,1))"/>
+                    <xsl:value-of select="concat($lastname_aut1, $firstname_aut1)"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:value-of select="substring(replace(normalize-unicode(concat($authorInitials,$firstContentWordTitleInitial), 'NFKD'),'\P{ASCII}',''),1,3)"/>
     </xsl:variable>
 
 
