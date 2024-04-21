@@ -200,7 +200,7 @@
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
-        <xsl:value-of select="substring(replace(normalize-unicode(concat($authorInitials,$firstContentWordTitleInitial), 'NFKD'),'\P{ASCII}',''),1,3)"/>
+        <xsl:value-of select="substring(replace(normalize-unicode(concat($authorInitials,$firstContentWordTitleInitial), 'NFKD'),'[^A-Z]',''),1,3)"/>
     </xsl:variable>
 
 
