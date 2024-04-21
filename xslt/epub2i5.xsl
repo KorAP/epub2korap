@@ -236,8 +236,8 @@
             <xsl:message terminate="yes">ERROR: No author found for ISBN: <xsl:value-of select="$isbn"/></xsl:message>
         </xsl:if>
 
-        <xsl:if test="not(matches($sigle, '^[A-Z]{3}[0-9]{2}/[A-Z]{3}\.[0-9]{5}$'))">
-            <xsl:message terminate="yes">ERROR: Strange sigle »<xsl:value-of select="$sigle"/>« for ISBN: <xsl:value-of select="$isbn"/></xsl:message>
+        <xsl:if test="not(matches($sigle, '^[A-Z]{3}[0-9]{2}/[A-Z]{2,3}\.[0-9]{5}$'))">
+            <xsl:message terminate="yes">ERROR: Invalid sigle »<xsl:value-of select="$sigle"/>« for ISBN: <xsl:value-of select="$isbn"/></xsl:message>
         </xsl:if>
 
         <idsDoc TEIform="TEI.2" type="text" version="1.0">
