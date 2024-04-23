@@ -10,6 +10,10 @@ services:
       KALAMAR_API: "http://kustvakt:8089/api/"
     depends_on:
       - kustvakt
+    volumes:
+      - type: bind
+        source: ./html/robots.txt
+        target: /kalamar/public/robots.txt
     profiles:
       - lite
     restart: "unless-stopped"
