@@ -378,7 +378,7 @@
         </hi>
     </xsl:template>
 
-    <xsl:template match="xhtml:span[matches(@class, 'regular')]">
+    <xsl:template match="xhtml:span[matches(@class, '(regular|norm)')]">
         <xsl:apply-templates/>
     </xsl:template>
 
