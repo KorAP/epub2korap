@@ -24,6 +24,10 @@
 
     <xsl:variable name="autor"
         select="replace(string-join($dnbBookdata//dc:creator[not(contains(., '[')) or matches(., '\[Verfasser\]')], ' ; '), ' *\[[^\]]*\]', '')"/>
+        <xsl:variable name="straight_autor" select="normalize-space(replace(hlu:reversedAuthors($autor), ',', ''))"/>
+    <xsl:variable name="translator"
+        select="replace(string-join($dnbBookdata//dc:creator[matches(., '\[Übersetzer\]')], ' ; '), ' *\[[^\]]*\]', '')"/>
+        <xsl:variable name="straight_translator" select="normalize-space(replace(hlu:reversedAuthors($translator), ',', ''))"/>
 
     <xsl:variable name="straight_autor" select="normalize-space(replace(hlu:reversedAuthors($autor), ',', ''))"/>
 
@@ -282,7 +286,9 @@
                                     <h.title type="main"><xsl:value-of select="$titel"/></h.title>
                                     <h.title type="sub"><xsl:value-of select="$untertitel"/></h.title>
                                     <h.author><xsl:value-of select="$autor"/></h.author>
-                                    <editor/>
+                                    <xsl:if test="$translator">
+                                        <editor role="translator"><xsl:value-of select="$translator"/></editor>
+                                    </xsl:if>
                                     <edition>
                                         <further/>
                                         <kind>E-Book-Ausgabe</kind>

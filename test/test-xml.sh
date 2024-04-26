@@ -45,6 +45,15 @@ else
   ((ERRORS++))
 fi
 
+observed=$(xmlstarlet sel --net -t -v "/idsCorpus/idsDoc/idsText/idsHeader/fileDesc/sourceDesc/biblStruct/monogr/editor[@role='translator'][1]"  target/dnb13.i5.xml)
+if $(assert_eq "$observed" "Zwack, Heinz"); then
+  log_success "translator is correctly identified"
+else
+  log_failure "translator is not correctly identified: $observed"
+  ((ERRORS++))
+fi
+
+
 if [ $ERRORS -gt 0 ]; then
   log_failure "There were $ERRORS errors"
   exit 1
