@@ -9,7 +9,7 @@ variables:
   DEBIAN_FRONTEND: noninteractive
   APT_CACHE_DIR: apt-cache
   SRC_DIR: test/resources/DNB
-  YEARS: 18
+  YEARS: "13 18"
 
 build-and-test-i5:
   stage: test

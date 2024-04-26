@@ -28,7 +28,7 @@ else
   log_failure "$I5_FILE does not contain $TEXTS non-empty h.author elements"
 fi
 
-observed=$(xmlstarlet sel --net -t -v "count(/idsCorpus/idsDoc/idsText/idsHeader/fileDesc/sourceDesc/biblStruct/monogr/h.author[contains(., '[')])"  $I5_FILE)
+observed=$(xmlstarlet sel --net -t -v "count(/idsCorpus/idsDoc/idsText/idsHeader/fileDesc/sourceDesc/biblStruct/monogr/h.author[contains(., '[')])"  target/dnb13.i5.xml)
 if $(assert_eq "$observed" "0"); then
   log_success "authors do not contain []"
 else
