@@ -29,7 +29,9 @@
         select="replace(string-join($dnbBookdata//dc:creator[matches(., '\[Übersetzer\]')], ' ; '), ' *\[[^\]]*\]', '')"/>
         <xsl:variable name="straight_translator" select="normalize-space(replace(hlu:reversedAuthors($translator), ',', ''))"/>
 
-    <xsl:variable name="straight_autor" select="normalize-space(replace(hlu:reversedAuthors($autor), ',', ''))"/>
+    <xsl:variable name="herausgeber"
+        select="replace(string-join($dnbBookdata//dc:creator[matches(., '\[(Herausgeber|Hrsg.)\]')], ' ; '), ' *\[[^\]]*\]', '')"/>
+        <xsl:variable name="straight_herausgeber" select="normalize-space(replace(hlu:reversedAuthors($herausgeber), ',', ''))"/>
 
     <xsl:variable name="ina"/>
     <xsl:variable name="_corpus"/>
@@ -98,20 +100,6 @@
 
     <xsl:variable name="untertitel"
         select="normalize-space(substring-after(substring-before(($dnbBookdata//dc:title)[1], '/'), ':'))"/>
-
-    <xsl:variable name="herausgeber">
-        <xsl:choose>
-            <xsl:when test="$dnbBookdata//dc:creator[ends-with(.,'[Hrsg.]')]">
-                <xsl:value-of
-                    select="replace(string-join($dnbBookdata//dc:creator[ends-with(.,'[Hrsg.]')][1], ' ; '),'\s?\[Hrsg.\]','')"
-                    />
-            </xsl:when>
-            <xsl:otherwise>.</xsl:otherwise>
-        </xsl:choose>
-    </xsl:variable>
-
-    <xsl:variable name="straight_herausgeber"
-        select="replace(hlu:reversedAuthors($herausgeber), ',', '')"/>
 
     <xsl:variable name="j" select="$erscheinungsjahr"/>
 
@@ -288,6 +276,9 @@
                                     <h.author><xsl:value-of select="$autor"/></h.author>
                                     <xsl:if test="$translator">
                                         <editor role="translator"><xsl:value-of select="$translator"/></editor>
+                                    </xsl:if>
+                                    <xsl:if test="$herausgeber">
+                                        <editor role="editor"><xsl:value-of select="$herausgeber"/></editor>
                                     </xsl:if>
                                     <edition>
                                         <further/>
