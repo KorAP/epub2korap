@@ -388,7 +388,7 @@
         </hi>
     </xsl:template>
 
-     <xsl:template match="xhtml:i|xhtml:span[@class='i']">
+     <xsl:template match="xhtml:i|xhtml:span[@class='i' or @class='it']">
         <hi rend="italic">
             <xsl:apply-templates/>
         </hi>
