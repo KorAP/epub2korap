@@ -27,7 +27,7 @@ build-and-test-i5:
     - source `find .. -name section_helper.sh`
     - start_section install_linux_packages "Installing missing Linux packages"
     - apt-get -o dir::cache::archives="$APT_CACHE_DIR" update
-    - apt-get -o dir::cache::archives="$APT_CACHE_DIR" install -y libxml2-utils curl
+    - apt-get -o dir::cache::archives="$APT_CACHE_DIR" install -y libxml2-utils curl openjdk-17-jre-headless
     - end_section install_linux_packages
     - start_section install_models "Installing models"
     - make models/dereko_domains_s.classifier
