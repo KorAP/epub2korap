@@ -16,7 +16,7 @@ build-and-test-i5:
   image: rocker/verse
   artifacts:
     paths:
-      - "target/*.i5.xml"
+      - "target/dnb??.i5.xml"
       - "target/*.zip"
   cache:
     - key: DNB4KorAP
