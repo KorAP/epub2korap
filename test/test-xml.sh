@@ -53,6 +53,14 @@ else
   ((ERRORS++))
 fi
 
+observed=$(grep -Ec '^Copyright' target/dnb13.i5.xml)
+if $(assert_eq "$observed" "2"); then
+  log_success "spaces at <br> elements are inserted correctly"
+else
+  log_failure "spaces at <br> elements are not inserted correctly"
+  ((ERRORS++))
+fi
+
 
 if [ $ERRORS -gt 0 ]; then
   log_failure "There were $ERRORS errors"

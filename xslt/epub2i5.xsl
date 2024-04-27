@@ -509,7 +509,9 @@
         </xsl:if>
     </xsl:template>
 
-    <xsl:template match="xhtml:br"/>
+    <xsl:template match="xhtml:br">
+        <lb/><xsl:text>&#10;</xsl:text>
+    </xsl:template>
 
     <xsl:template match="xhtml:*">
         <xsl:message>
