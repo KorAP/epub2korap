@@ -27,6 +27,7 @@ if $(assert_eq "$observed" "$TEXTS"); then
   log_success "$I5_FILE contains $TEXTS non-empty h.author elements"
 else
   log_failure "$I5_FILE does not contain $TEXTS non-empty h.author elements: $observed"
+  ((ERRORS++))
 fi
 
 observed=$(xmlstarlet sel --net -t -v "/idsCorpus/idsHeader/fileDesc/titleStmt/c.title" target/dnb13.i5.xml)
