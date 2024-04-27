@@ -52,9 +52,12 @@ assert_eq() {
   local msg="${3-}"
 
   if [ "$expected" == "$actual" ]; then
+    [ "${#msg}" -gt 0 ] && log_success "$msg" || true
+    ((PASSED++))
     return 0
   else
-    [ "${#msg}" -gt 0 ] && log_failure "$expected == $actual :: $msg" || true
+    [ "${#msg}" -gt 0 ] && log_failure "$expected != $actual :: $msg is not the case" || true
+    ((ERRORS++))
     return 1
   fi
 }
@@ -65,9 +68,12 @@ assert_not_eq() {
   local msg="${3-}"
 
   if [ ! "$expected" == "$actual" ]; then
+    [ "${#msg}" -gt 0 ] && log_success "$msg" || true
+    ((PASSED++))
     return 0
   else
     [ "${#msg}" -gt 0 ] && log_failure "$expected != $actual :: $msg" || true
+    ((ERRORS++))
     return 1
   fi
 }
@@ -171,6 +177,7 @@ assert_contain() {
   fi
 
   if [ -z "${haystack##*$needle*}" ]; then
+    ((PASSED++))
     return 0
   else
     [ "${#msg}" -gt 0 ] && log_failure "$haystack doesn't contain $needle :: $msg" || true
@@ -188,9 +195,12 @@ assert_not_contain() {
   fi
 
   if [ "${haystack##*$needle*}" ]; then
+    [ "${#msg}" -gt 0 ] && log_success "$msg" || true
+    ((PASSED++))
     return 0
   else
-    [ "${#msg}" -gt 0 ] && log_failure "$haystack contains $needle :: $msg" || true
+    [ "${#msg}" -gt 0 ] && log_failure "$haystack not contains $needle :: $msg" || true
+    ((ERRORS++))
     return 1
   fi
 }
@@ -201,9 +211,12 @@ assert_gt() {
   local msg="${3-}"
 
   if [[ "$first" -gt  "$second" ]]; then
+    [ "${#msg}" -gt 0 ] && log_success "$msg" || true
+    ((PASSED++))
     return 0
   else
     [ "${#msg}" -gt 0 ] && log_failure "$first > $second :: $msg" || true
+    ((ERRORS++))
     return 1
   fi
 }
@@ -214,9 +227,12 @@ assert_ge() {
   local msg="${3-}"
 
   if [[ "$first" -ge  "$second" ]]; then
+    [ "${#msg}" -gt 0 ] && log_success "$msg" || true
+    ((PASSED++))
     return 0
   else
     [ "${#msg}" -gt 0 ] && log_failure "$first >= $second :: $msg" || true
+    ((ERRORS++))
     return 1
   fi
 }
@@ -227,9 +243,12 @@ assert_lt() {
   local msg="${3-}"
 
   if [[ "$first" -lt  "$second" ]]; then
+    [ "${#msg}" -gt 0 ] && log_success "$msg" || true
+    ((PASSED++))
     return 0
   else
     [ "${#msg}" -gt 0 ] && log_failure "$first < $second :: $msg" || true
+    ((ERRORS++))
     return 1
   fi
 }
@@ -240,9 +259,21 @@ assert_le() {
   local msg="${3-}"
 
   if [[ "$first" -le  "$second" ]]; then
+    [ "${#msg}" -gt 0 ] && log_success "$msg" || true
+    ((PASSED++))
     return 0
   else
     [ "${#msg}" -gt 0 ] && log_failure "$first <= $second :: $msg" || true
+    ((ERRORS++))
     return 1
   fi
+}
+
+exit_with_test_summary() {
+  if [ "$ERRORS" -gt 0 ]; then
+    log_failure "There were $ERRORS errors"
+  else
+    log_success "All $PASSED tests passed"
+  fi
+  exit $ERRORS
 }
