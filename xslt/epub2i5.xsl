@@ -15,11 +15,11 @@
     <xsl:variable name="ev"/>
     <xsl:variable name="x"/>
 
-    <xsl:variable name="isbn" as="xs:string" select="replace(document-uri(), '.*/([0-9]{9,13}X?).*' , '$1')"/>
-
+    <xsl:variable name="idno" as="xs:string" select="replace(document-uri(), '.*/([0-9]{9,13}X?).*' , '$1')"/>
+ 
 
     <xsl:variable name="dnbBookdata">
-        <xsl:copy-of select="doc(concat('https://services.dnb.de/sru/dnb?version=1.1&amp;operation=searchRetrieve&amp;query=NUM%3D', $isbn, '&amp;recordSchema=oai_dc'))"/>
+        <xsl:copy-of select="doc(concat('https://services.dnb.de/sru/dnb?version=1.1&amp;operation=searchRetrieve&amp;query=NUM%3D', $idno, '&amp;recordSchema=oai_dc'))"/>
     </xsl:variable>
 
     <xsl:variable name="autor"
@@ -196,15 +196,15 @@
     </xsl:variable>
 
 
-    <xsl:variable name="text_sigle" select="replace($isbn, '.*([0-9]{5})[0-9X]$', '$1')"/>
+    <xsl:variable name="text_sigle" select="replace($idno, '.*([0-9]{5})[0-9X]$', '$1')"/>
     <xsl:variable name="sigle" select="concat($corpus_sigle, '/', $doc_sigle, '.', $text_sigle)"/>
 
     <!-- fuer BOT+xy: (?) -->
     <xsl:variable name="xyref">
         <xsl:value-of select="document-uri(.)"/>
         <xsl:text>; </xsl:text>
-        <xsl:text>ISBN:</xsl:text>
-        <xsl:value-of select="$isbn"/>
+        <xsl:text>IDNO:</xsl:text>
+        <xsl:value-of select="$idno"/>
         <xsl:text>; </xsl:text>
         <xsl:value-of select="string-join($dnbBookdata//dc:identifier)"/>
     </xsl:variable>
@@ -217,19 +217,19 @@
 
     <xsl:template match="/">
         <xsl:if test="not($j)">
-            <xsl:message terminate="yes">ERROR: No dc:date found for ISBN: <xsl:value-of select="$isbn"/></xsl:message>
+            <xsl:message terminate="yes">ERROR: No dc:date found for IDNO: <xsl:value-of select="$idno"/></xsl:message>
         </xsl:if>
 
         <xsl:if test="not(normalize-space($titel))">
-            <xsl:message terminate="yes">ERROR: No title found for ISBN: <xsl:value-of select="$isbn"/></xsl:message>
+            <xsl:message terminate="yes">ERROR: No title found for IDNO: <xsl:value-of select="$idno"/></xsl:message>
         </xsl:if>
 
         <xsl:if test="not(normalize-space($autor))">
-            <xsl:message terminate="yes">ERROR: No author found for ISBN: <xsl:value-of select="$isbn"/></xsl:message>
+            <xsl:message terminate="yes">ERROR: No author found for IDNO: <xsl:value-of select="$idno"/></xsl:message>
         </xsl:if>
 
         <xsl:if test="not(matches($sigle, '^[A-Z]{3}[0-9]{2}/[A-Z]{2,3}\.[0-9]{5}$'))">
-            <xsl:message terminate="yes">ERROR: Invalid sigle »<xsl:value-of select="$sigle"/>« for ISBN: <xsl:value-of select="$isbn"/></xsl:message>
+            <xsl:message terminate="yes">ERROR: Invalid sigle »<xsl:value-of select="$sigle"/>« for IDNO: <xsl:value-of select="$idno"/></xsl:message>
         </xsl:if>
 
         <idsDoc TEIform="TEI.2" type="text" version="1.0">
@@ -327,7 +327,7 @@
     <xsl:template match="opf:item" mode="collect">
         <xsl:variable name="href" select="@href"/>
         <xsl:message>
-            <xsl:text>converting: </xsl:text><xsl:value-of select="$href"/><xsl:text> </xsl:text><xsl:value-of select="$isbn"/>
+            <xsl:text>converting: </xsl:text><xsl:value-of select="$href"/><xsl:text> </xsl:text><xsl:value-of select="$idno"/>
         </xsl:message>
         <xsl:apply-templates select="doc(resolve-uri($href, base-uri()))/xhtml:html/xhtml:body"/>
     </xsl:template>
