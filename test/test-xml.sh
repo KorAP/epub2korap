@@ -31,6 +31,15 @@ assert_eq "$observed" "Zwack, Heinz" "translator is correctly identified"
 observed=$(grep -Ec '^Copyright' target/dnb13.i5.xml)
 assert_eq "$observed" "2" "spaces at <br> elements are inserted correctly"
 
+observed=$(xmlstarlet sel --net -t -v "count(/idsCorpus/idsDoc/idsText/idsHeader/profileDesc/textDesc/textType[contains(., 'Arztroman')])"  target/dnb18.i5.xml)
+assert_gt "$observed" "0" "at least one textType contains 'Arztroman'"
+
+observed=$(xmlstarlet sel --net -t -v "count(/idsCorpus/idsDoc/idsText/idsHeader/profileDesc/textDesc/textType[normalize-space(.)=''])"  target/dnb18.i5.xml)
+assert_eq "$observed" "0" "no empty textType elements"
+
+observed=$(xmlstarlet sel --net -t -v "count(/idsCorpus/idsDoc/idsText/idsHeader/profileDesc/textDesc/textTypeRef[normalize-space(.)=''])"  target/dnb18.i5.xml)
+assert_eq "$observed" "0" "no empty textTypeRef elements"
+
 exit_with_test_summary
 
 

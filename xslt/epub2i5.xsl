@@ -83,6 +83,26 @@
 
     <xsl:variable name="texttype" select="replace(($dnbBookdata//dc:subject[matches(., '^[A-Z] ')])[1], '^[A-Z] (.*)', '$1')"/>
 
+  <xsl:variable name="genretable">
+    <genres>
+      <genre keyRegex="krimi" genre="Roman: Kriminalroman"/>
+      <genre keyRegex="arztroman" genre="Roman: Arztroman"/>
+      <genre keyRegex="liebesroman" genre="Roman: Liebesroman"/>
+      <genre keyRegex="science.?fiction" genre="Roman: Science-Fiction-Roman"/>
+      <genre keyRegex="horror" genre="Roman: Horrorroman"/>
+      <genre keyRegex="western" genre="Roman: Westernroman"/>
+      <genre keyRegex="fantasy" genre="Roman: Fantasyroman"/>
+      <genre keyRegex="historischer roman" genre="Roman: Historischer Roman"/>
+      <genre keyRegex="erzählung" genre="Erzählung"/>
+      <genre keyRegex="novelle" genre="Novelle"/>
+      <genre keyRegex="anthologie" genre="Anthologie"/>
+      <genre keyRegex="kurzgeschichte" genre="Kurzgeschichte"/>
+      <genre keyRegex="roman" genre="Roman"/>
+      <genre keyRegex="." genre="Roman"/>
+    </genres>
+  </xsl:variable>
+
+  <xsl:variable name="textFullGenre" select="$genretable/genres/genre[matches($dnbBookdata, ./@keyRegex, 'i')][1]/@genre"/>
     <xsl:variable name="verlag">
         <xsl:choose>
             <xsl:when test="contains(($dnbBookdata//dc:publisher)[1], ':')">
@@ -307,8 +327,8 @@
                         </creation>
                         <textClass/>
                         <textDesc>
-                            <textType><xsl:value-of select="$texttype"/></textType>
-                            <textTypeRef><xsl:value-of select="$texttype"/></textTypeRef>
+                            <textType><xsl:value-of select="$textFullGenre"/></textType>
+                            <textTypeRef><xsl:value-of select="replace($textFullGenre, '.*: *', '')"/></textTypeRef>
                             <textDomain/>
                         </textDesc>
                     </profileDesc>
