@@ -16,10 +16,20 @@
     <xsl:variable name="x"/>
 
     <xsl:variable name="idno" as="xs:string" select="replace(document-uri(), '.*/([0-9]{9,13}X?).*' , '$1')"/>
- 
 
+    <xsl:variable name="idno_type">
+    <xsl:choose>
+      <xsl:when test="starts-with($idno,'1')">
+	<xsl:value-of select="'IDN'"/>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:value-of select="'ISBN'"/>
+      </xsl:otherwise>
+    </xsl:choose>
+    </xsl:variable>
+    
     <xsl:variable name="dnbBookdata">
-        <xsl:copy-of select="doc(concat('https://services.dnb.de/sru/dnb?version=1.1&amp;operation=searchRetrieve&amp;query=NUM%3D', $idno, '&amp;recordSchema=oai_dc'))"/>
+      <xsl:copy-of select="doc(concat('https://services.dnb.de/sru/dnb?version=1.1&amp;operation=searchRetrieve&amp;query=', $idno_type, '%3D', $idno, '&amp;recordSchema=oai_dc'))"/>
     </xsl:variable>
 
     <xsl:variable name="autor"
