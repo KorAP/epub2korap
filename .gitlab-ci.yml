@@ -45,7 +45,7 @@ build-index:
     - docker:dind
   stage: build
   rules:
-    - if: '$CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH || $CI_JOB_MANUAL == "true"'
+    - if: '$CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH && $CI_JOB_MANUAL == "true"'
   variables:
       VID: $CI_COMMIT_BRANCH-$CI_COMMIT_SHORT_SHA
       PERL_LOCAL_LIB_ROOT: ./perl5
@@ -107,7 +107,7 @@ deploy:
   dependencies:
     - "build-index"
   rules:
-    - if: '$CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH || $CI_JOB_MANUAL == "true"'
+    - if: '$CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH && $CI_JOB_MANUAL == "true"'
   image: rocker/verse
   before_script:
     - source `find .. -name section_helper.sh`
