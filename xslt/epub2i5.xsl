@@ -7,7 +7,10 @@
                 xmlns:saxon="http://saxon.sf.net/"
                 xmlns:xhtml="http://www.w3.org/1999/xhtml"
                 xmlns:map="http://www.w3.org/2005/xpath-functions/map"
-                exclude-result-prefixes="xs opf dc ids hlu map saxon xhtml">
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xmlns:srw="http://www.loc.gov/zing/srw/"
+                xmlns:oai="http://www.openarchives.org/OAI/2.0/oai_dc/"
+                exclude-result-prefixes="xs opf dc ids hlu map saxon xhtml xsi srw oai">
 
     <xsl:output method="xml" indent="yes" omit-xml-declaration="yes" saxon:line-length="1000"/>
     <xsl:strip-space elements="*"/>
@@ -18,14 +21,14 @@
     <xsl:variable name="idno" as="xs:string" select="replace(document-uri(), '.*/([0-9]{9,13}X?).*' , '$1')"/>
 
     <xsl:variable name="idno_type">
-    <xsl:choose>
-      <xsl:when test="starts-with($idno,'1')">
-	<xsl:value-of select="'IDN'"/>
-      </xsl:when>
-      <xsl:otherwise>
-	<xsl:value-of select="'ISBN'"/>
-      </xsl:otherwise>
-    </xsl:choose>
+        <xsl:choose>
+            <xsl:when test="starts-with($idno,'1')">
+                <xsl:value-of select="'IDN'"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="'ISBN'"/>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:variable>
     
     <xsl:variable name="dnbBookdata">
@@ -67,8 +70,7 @@
         <xsl:variable name="title-with-subtitles">
             <xsl:choose>
                 <xsl:when test="contains(($dnbBookdata//dc:title)[1],':')">
-                    <xsl:value-of select="normalize-space(substring-before(substring-before(($dnbBookdata//dc:title)[1], '/'), ':'))"
-                        />
+                    <xsl:value-of select="normalize-space(substring-before(substring-before(($dnbBookdata//dc:title)[1], '/'), ':'))"/>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:value-of select="normalize-space(substring-before(($dnbBookdata//dc:title)[1], '/'))"/>
@@ -272,6 +274,17 @@
                     <publicationStmt>
                         <distributor/>
                         <pubAddress/>
+                        <xsl:for-each select="$dnbBookdata//dc:identifier">
+                            <xsl:variable name="type" select="substring-after(@xsi:type, ':')"/>
+                            <xsl:choose>
+                                <xsl:when test="@xsi:type='tel:ISBN'">
+                                    <xsl:if test="matches(.,'(^([0-9]|-)+X?).*')">
+                                        <idno type="{$type}"><xsl:value-of select="replace(., '(([0-9]|-)+X?).*', '$1')"/></idno>
+                                    </xsl:if>
+                                </xsl:when>
+                                <xsl:otherwise><idno type="{$type}"><xsl:value-of select="."/></idno></xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:for-each>
                         <availability region="world" status="unknown">QAO-NC</availability>
                         <pubDate/>
                     </publicationStmt>
