@@ -162,9 +162,9 @@
                 <xsl:value-of select="concat('[', $x, ']')"/>
             </xsl:when>
             <xsl:when
-                test="matches($untertitel, '([Rr]oman|[Ee]rzä?hlung(en)?|[Aa]nthologie|[Gg]eschichte(n)?|[Nn]ovelle)')">
+                test="matches($untertitel, '([Rr]oman|[Ee]rzählung(en)?|[Aa]nthologie|[Gg]eschichte(n)?|[Nn]ovelle)')">
                 <xsl:value-of
-                    select="concat('[', replace(replace($untertitel, '.*?(((^|\P{L})\p{L}+)?([Rr]oman|[Ee]rzä?hlung(en)?|[Aa]nthologie|[Gg]eschichte(n)?|[Nn]ovelle)).*', '$1'), '\P{L}*(.+)', '$1'), ']')"
+                    select="concat('[', replace(replace($untertitel, '.*?(((^|\P{L})\p{L}+)?([Rr]oman|[Ee]rzählung(en)?|[Aa]nthologie|[Gg]eschichte(n)?|[Nn]ovelle)).*', '$1'), '\P{L}*(.+)', '$1'), ']')"
                     />
             </xsl:when>
             <xsl:otherwise>
