@@ -249,6 +249,18 @@
         select="concat($straight_autor, ': ', $titel, ' (',  $erscheinungsjahr, ')')"/>
 
     <xsl:template match="/">
+        <!-- for debugging purposes 
+        <xsl:message select="concat('uri: ', base-uri())"/>
+        <xsl:message select="concat('idno: ', $idno)"/>
+
+        <xsl:message>
+            dnbBookdataQuery: <xsl:value-of select="$dnbBookdataQuery"/>
+        </xsl:message>
+
+        <xsl:message>
+            <xsl:copy-of select="$dnbBookdata"/>
+        </xsl:message>
+        -->
         <xsl:if test="not($j)">
             <xsl:message terminate="yes">ERROR: No dc:date found for IDNO: <xsl:value-of select="$idno"/></xsl:message>
         </xsl:if>
