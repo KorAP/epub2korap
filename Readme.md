@@ -22,6 +22,14 @@ Prerequisite: [KorAP-XML-CoNLL-U](https://github.com/KorAP/KorAP-XML-CoNLL-U)
 make -j $(nproc) target/dnb18.zip SRC_DIR=test/resources/DNB YEARS=18
 ```
 
+### Build new KorAP index
+
+```bash
+make -j $(nproc) index
+```
+
+The index will be in `target/dnb.index`.
+
 ### Run KorAP
 
 Adjust the following line in your `korap4dnb-compose.yml` to point to your index (it is in target/dnb.index by default, but should better be copied to a safe place):
@@ -67,6 +75,15 @@ make -j $(nproc) all
 ```
 
 ## News
+
+* 2024-05-26
+  * extended genre classification based on metadata keywords
+  * Saxon XSLT processor and license updated from 9 to 12.4
+
+* 2024-05-08
+  * added `idno` elements with all ids given by dnb SRU api
+  * fixed bug with ambiguous (dnb-id/isbn) ids
+  * basic genre classification based on metadata keywords
 
 * 2024-04-19
   * SRC_DIR now defaults to the production sample!
