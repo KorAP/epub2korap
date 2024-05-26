@@ -103,16 +103,27 @@
     <genres>
       <genre keyRegex="krimi" genre="Roman: Kriminalroman"/>
       <genre keyRegex="arztroman" genre="Roman: Arztroman"/>
-      <genre keyRegex="liebesroman" genre="Roman: Liebesroman"/>
+      <genre keyRegex="(liebes.*roman|dunja)" genre="Roman: Liebesroman"/>
+      <genre keyRegex="jugend" genre="Jugendliteratur: Jugendliteratur"/> <!-- wie in KJL -->
       <genre keyRegex="science.?fiction" genre="Roman: Science-Fiction-Roman"/>
       <genre keyRegex="horror" genre="Roman: Horrorroman"/>
+      <genre keyRegex="grusel" genre="Roman: Gruselroman"/>
+      <genre keyRegex="vampir.*roman" genre="Roman: Vampirroman"/>
       <genre keyRegex="western" genre="Roman: Westernroman"/>
       <genre keyRegex="fantasy" genre="Roman: Fantasyroman"/>
+      <genre keyRegex="mystery" genre="Roman: Mysteryroman"/>
+      <genre keyRegex="heimat.*roman" genre="Roman: Heimatroman"/>
+      <genre keyRegex="familien.*roman" genre="Roman: Familienroman"/>
+      <genre keyRegex="(sex|erotik|erotische|versaute|fick|sm).*roman" genre="Roman: Erotikroman"/>
+      <genre keyRegex="gay" genre="Roman: Gay-Roman"/>
+      <genre keyRegex="(sex|erotik|erotische|versaute|fick|sm)" genre="Erzählung: Erotikerzählung"/>
       <genre keyRegex="historischer roman" genre="Roman: Historischer Roman"/>
       <genre keyRegex="erzählung" genre="Erzählung"/>
       <genre keyRegex="novelle" genre="Novelle"/>
       <genre keyRegex="anthologie" genre="Anthologie"/>
       <genre keyRegex="kurzgeschichte" genre="Kurzgeschichte"/>
+      <genre keyRegex="geschichte" genre="Erzählung"/>
+      <genre keyRegex="heftroman" genre="Roman: Heftroman"/>
       <genre keyRegex="roman" genre="Roman"/>
       <genre keyRegex="." genre="Roman"/>
     </genres>
