@@ -19,7 +19,7 @@
     <xsl:variable name="ev"/>
     <xsl:variable name="x"/>
 
-    <xsl:variable name="idno" as="xs:string" select="replace(document-uri(), '.*/([0-9]{9,13}X?).*' , '$1')"/>
+    <xsl:variable name="idno" as="xs:string" select="replace(base-uri(), '.*/([0-9]{9,13}X?).*' , '$1')"/>
 
     <xsl:variable name="idno_type">
         <xsl:choose>
@@ -32,8 +32,11 @@
         </xsl:choose>
     </xsl:variable>
     
+    <xsl:variable name="dnbBookdataQuery" as="xs:string">
+        <xsl:value-of disable-output-escaping="yes" select="concat('https://services.dnb.de/sru/dnb?version=1.1&amp;operation=searchRetrieve&amp;query=', $idno_type, '%3D', $idno, '&amp;recordSchema=oai_dc')"/>
+    </xsl:variable>
     <xsl:variable name="dnbBookdata">
-      <xsl:copy-of select="doc(concat('https://services.dnb.de/sru/dnb?version=1.1&amp;operation=searchRetrieve&amp;query=', $idno_type, '%3D', $idno, '&amp;recordSchema=oai_dc'))"/>
+      <xsl:copy-of select="doc($dnbBookdataQuery)"/>
     </xsl:variable>
 
     <xsl:variable name="autor"
@@ -234,7 +237,7 @@
 
     <!-- fuer BOT+xy: (?) -->
     <xsl:variable name="xyref">
-        <xsl:value-of select="document-uri(.)"/>
+        <xsl:value-of select="base-uri(.)"/>
         <xsl:text>; </xsl:text>
         <xsl:text>IDNO:</xsl:text>
         <xsl:value-of select="$idno"/>
