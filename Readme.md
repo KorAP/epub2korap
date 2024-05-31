@@ -56,6 +56,12 @@ docker compose -p korap4dnb --profile=lite -f korap4dnb-compose.yml up -d
 docker compose -p korap4dnb down
 ```
 
+### Restart KorAP
+
+```bash
+docker compose -p korap4dnb --profile=lite restart
+```
+
 ### To generate Annotations
 
 Install prerequisite korap/conllu2treetagger and korap/conllu2spacy docker images if not present:
