@@ -101,10 +101,9 @@
 
   <xsl:variable name="genretable">
     <genres>
-      <genre keyRegex="krimi" genre="Roman: Kriminalroman"/>
-      <genre keyRegex="arztroman" genre="Roman: Arztroman"/>
-      <genre keyRegex="(liebes.*roman|dunja)" genre="Roman: Liebesroman"/>
-      <genre keyRegex="jugend" genre="Jugendliteratur: Jugendliteratur"/> <!-- wie in KJL -->
+      <genre keyRegex="(krimi|thriller)" genre="Roman: Kriminalroman"/>
+      <genre keyRegex="arzt.?roman" genre="Roman: Arztroman"/>
+      <genre keyRegex="(liebes.*roman|dunja|romanze)" genre="Roman: Liebesroman"/>
       <genre keyRegex="science.?fiction" genre="Roman: Science-Fiction-Roman"/>
       <genre keyRegex="horror" genre="Roman: Horrorroman"/>
       <genre keyRegex="grusel" genre="Roman: Gruselroman"/>
@@ -118,6 +117,8 @@
       <genre keyRegex="gay" genre="Roman: Gay-Roman"/>
       <genre keyRegex="(sex|erotik|erotische|versaute|fick|sm)" genre="Erzählung: Erotikerzählung"/>
       <genre keyRegex="historischer roman" genre="Roman: Historischer Roman"/>
+      <genre keyRegex="jugend" genre="Jugendliteratur: Jugendliteratur"/> <!-- wie in KJL -->
+      <genre keyRegex="(ein roman|der roman)" genre="Roman"/>
       <genre keyRegex="erzählung" genre="Erzählung"/>
       <genre keyRegex="novelle" genre="Novelle"/>
       <genre keyRegex="anthologie" genre="Anthologie"/>
