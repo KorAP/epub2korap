@@ -456,7 +456,7 @@
         </hi>
     </xsl:template>
 
-     <xsl:template match="xhtml:i|xhtml:span[@class='i' or @class='it']">
+     <xsl:template match="xhtml:i|xhtml:span[@class='i' or @class='it' or @class='Italic']|xhtml:span[@style='font-style:italic' or @style='font-style:italic;']">
         <hi rend="italic">
             <xsl:apply-templates/>
         </hi>
