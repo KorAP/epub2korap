@@ -302,17 +302,6 @@
                     <publicationStmt>
                         <distributor/>
                         <pubAddress/>
-                        <xsl:for-each select="$dnbBookdata//dc:identifier">
-                            <xsl:variable name="type" select="substring-after(@xsi:type, ':')"/>
-                            <xsl:choose>
-                                <xsl:when test="@xsi:type='tel:ISBN'">
-                                    <xsl:if test="matches(.,'(^([0-9]|-)+X?).*')">
-                                        <idno type="{$type}"><xsl:value-of select="replace(., '(([0-9]|-)+X?).*', '$1')"/></idno>
-                                    </xsl:if>
-                                </xsl:when>
-                                <xsl:otherwise><idno type="{$type}"><xsl:value-of select="."/></idno></xsl:otherwise>
-                            </xsl:choose>
-                        </xsl:for-each>
                         <availability region="world" status="unknown">QAO-NC</availability>
                         <pubDate/>
                     </publicationStmt>
@@ -336,6 +325,17 @@
                         <publicationStmt>
                             <distributor/>
                             <pubAddress/>
+                            <xsl:for-each select="$dnbBookdata//dc:identifier">
+                                <xsl:variable name="type" select="substring-after(@xsi:type, ':')"/>
+                                <xsl:choose>
+                                    <xsl:when test="@xsi:type='tel:ISBN'">
+                                        <xsl:if test="matches(.,'(^([0-9]|-)+X?).*')">
+                                            <idno type="{$type}"><xsl:value-of select="replace(., '(([0-9]|-)+X?).*', '$1')"/></idno>
+                                        </xsl:if>
+                                    </xsl:when>
+                                    <xsl:otherwise><idno type="{$type}"><xsl:value-of select="."/></idno></xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:for-each>
                             <availability region="world" status="unknown">QAO-NC</availability>
                             <pubDate/>
                         </publicationStmt>
