@@ -388,7 +388,7 @@
                    <body>
                     <!-- Call the template for each link in the TOC 
                          <xsl:apply-templates select="//xhtml:ol[@class='toc']/xhtml:li/xhtml:a" mode="collect"/> -->
-                    <xsl:apply-templates select="//opf:package/opf:manifest/opf:item[matches(@href, '\.x?html$') and not(matches(@href, '(cover|toc|copyright|feedback|inhalt|nav|titlepage).*'))]" mode="collect"/>
+                    <xsl:apply-templates select="//opf:package/opf:manifest/opf:item[matches(@href, '\.x?html?$') and not(matches(@href, '(cover|toc|copyright|feedback|inhalt|nav|titlepage).*'))]" mode="collect"/>
                     </body>
                 </text>
             </idsText>
