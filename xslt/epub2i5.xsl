@@ -288,7 +288,7 @@
             <xsl:message terminate="yes">ERROR: No author found for IDNO: <xsl:value-of select="$idno"/></xsl:message>
         </xsl:if>
 
-        <xsl:if test="not(matches($sigle, '^[A-Z]{3}[0-9]{2}/[A-Z]{2,3}\.[0-9]{5}$'))">
+        <xsl:if test="not(matches($sigle, '^[A-Z]{2,3}[0-9]{2}/[A-Z]{2,3}\.[0-9]{5}$'))">
             <xsl:message terminate="yes">ERROR: Invalid sigle »<xsl:value-of select="$sigle"/>« for IDNO: <xsl:value-of select="$idno"/></xsl:message>
         </xsl:if>
 
