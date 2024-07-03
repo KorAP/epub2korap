@@ -52,9 +52,10 @@ services:
     restart: "unless-stopped"
     user: root
   kustvakt:
-    image: "korap/kustvakt:latest"
-    expose:
-      - 8089
+    image: "korap/kustvakt:0.73.2"
+    ports:
+      - "8089:8089"
+    user: root
     volumes:
       - "/home/kupietz/epub2i5/dnb.index:/kustvakt/index:z"
       - type: bind
