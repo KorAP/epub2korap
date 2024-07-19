@@ -1,5 +1,9 @@
 # EPub to KorAP (via TEI I5) conversion
 
+## Note
+
+This version has been trimmed of all licensed and copyrighted materials. As a result, the test data is not included in this repository, and commands may not run as expected without additional setup.
+
 ## Run
 
 ### Generate an I5 corpus from the included test data
@@ -89,7 +93,6 @@ make -j $(nproc) all
   * SRC_DIR now defaults to the production sample!
   * ISBN number recognition should be fixed now
   * ignore faulty xhtml input files and conversion errors – just issue a warning
-  * docker compose now uses http default port 80 externally
 
 * 2024-04-15
   * added pass2 and pass3 to xslt conversion to …
@@ -123,5 +126,3 @@ make -j $(nproc) all
   * first working pipeline for EPub ⮕ TEI I5 ⮕ KorAP-XML ⮕ (UDPipe+TreeTagger+Spacy) ⮕ Krill ⮕ KorAP-JSON
 
 * 2024-03-15: DNB test data added
-
-* 2024-03-08: example EPub and I5 added from DeReKo KJL corpus: *Christiane F. ; Kai Hermann ; Horst Rieck: Wir Kinder vom Bahnhof Zoo* in the folder [`test/resources/`](./test/resources/)  – do not distribute (copyrighted data)
