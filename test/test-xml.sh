@@ -44,6 +44,12 @@ min_expected=$(xmlstarlet sel --net -t -v "count(/idsCorpus/idsDoc/idsText)"  ta
 observed=$(xmlstarlet sel --net -t -v "count(/idsCorpus/idsDoc/idsText/idsHeader/fileDesc/publicationStmt/idno)"  target/dnb18.i5.xml)
 assert_gt "$observed" "$min_expected" "exvery text has more than one idno element"
 
+observed=$(xmlstarlet sel --net -t -v "count(/idsCorpus/idsDoc/idsText/idsHeader/fileDesc/publicationStmt/idno[@type='URN'])"  target/dnb18.i5.xml)
+assert_eq "$observed" "$min_expected" "exvery text has one idno element of type URN"
+
+observed=$(xmlstarlet sel --net -t -v "count(/idsCorpus/idsDoc/idsText/idsHeader/fileDesc/publicationStmt/idno[@type='URN' and @rend='URN'])"  target/dnb18.i5.xml)
+assert_eq "$observed" "$min_expected" "every idno element of type URN also has attribute rend='URN'"
+
 exit_with_test_summary
 
 
