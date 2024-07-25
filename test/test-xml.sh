@@ -47,8 +47,8 @@ assert_gt "$observed" "$min_expected" "exvery text has more than one idno elemen
 observed=$(xmlstarlet sel --net -t -v "count(/idsCorpus/idsDoc/idsText/idsHeader/fileDesc/publicationStmt/idno[@type='URN'])"  target/dnb18.i5.xml)
 assert_eq "$observed" "$min_expected" "exvery text has one idno element of type URN"
 
-observed=$(xmlstarlet sel --net -t -v "count(/idsCorpus/idsDoc/idsText/idsHeader/fileDesc/publicationStmt/idno[@type='URN' and @rend='URN'])"  target/dnb18.i5.xml)
-assert_eq "$observed" "$min_expected" "every idno element of type URN also has attribute rend='URN'"
+observed=$(xmlstarlet sel --net -t -v "count(/idsCorpus/idsDoc/idsText/idsHeader/fileDesc/publicationStmt/idno[@type='URL' and starts-with(@rend, 'URN;urn:nbn:de:')])"  target/dnb18.i5.xml)
+assert_eq "$observed" "$min_expected" "for every idno element of type URN, there is also an URL element with @rend starting with 'URN;urn:nbn:de:'"
 
 exit_with_test_summary
 

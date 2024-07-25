@@ -333,8 +333,8 @@
                                             <idno type="{$type}"><xsl:value-of select="replace(., '(([0-9]|-)+X?).*', '$1')"/></idno>
                                         </xsl:if>
                                     </xsl:when>
-                                    <xsl:when test="$type='URN'">
-                                        <idno rend="URN" type="URN"><xsl:value-of select="."/></idno>
+                                    <xsl:when test="$type='URL' and contains(., '/urn:nbn:de')">
+                                        <idno rend="URN;{tokenize(., '/')[last()]}" type="URL"><xsl:value-of select="."/></idno>
                                     </xsl:when>
                                     <xsl:otherwise><idno type="{$type}"><xsl:value-of select="."/></idno></xsl:otherwise>
                                 </xsl:choose>
