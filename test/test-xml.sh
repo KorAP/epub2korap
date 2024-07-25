@@ -40,6 +40,10 @@ assert_eq "$observed" "0" "no empty textType elements"
 observed=$(xmlstarlet sel --net -t -v "count(/idsCorpus/idsDoc/idsText/idsHeader/profileDesc/textDesc/textTypeRef[normalize-space(.)=''])"  target/dnb18.i5.xml)
 assert_eq "$observed" "0" "no empty textTypeRef elements"
 
+min_expected=$(xmlstarlet sel --net -t -v "count(/idsCorpus/idsDoc/idsText)"  target/dnb18.i5.xml)
+observed=$(xmlstarlet sel --net -t -v "count(/idsCorpus/idsDoc/idsText/idsHeader/fileDesc/publicationStmt/idno)"  target/dnb18.i5.xml)
+assert_gt "$observed" "$min_expected" "exvery text has more than one idno element"
+
 exit_with_test_summary
 
 
