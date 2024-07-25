@@ -1,12 +1,10 @@
-# Change the SRC_DIR to the directory containing the DNB EPUB files, e.g. with 
-# make -j 96 target/dnb13.index.tar.xz SRC_DIR=../sample.10000
-
-SRC_DIR ?= /mnt/data/KorAP@DNB/Random-10-12-23.epub
-
-# Change YEARS to the years you want to process, e.g. with
-# make -j12 i5valid YEARS="18 19"
-
+ifneq (,$(filter test,$(MAKECMDGOALS)))
+SRC_DIR = test/resources/DNB
+YEARS=13 18
+else
+SRC_DIR ?= /mnt/data/KorAP@DNB
 YEARS ?= $(shell seq -w 2012 2024 | sed 's/^.*\([0-9][0-9]\)/\1/')
+endif
 
 BUILD_DIR = build
 TARGET_DIR ?= target
@@ -19,12 +17,13 @@ KORAPXML2CONLLU_HEAP ?= $(shell echo "$$(($(MAX_THREADS) * 2500))")
 KORAPXML2CONLLU ?= java -Xmx$(KORAPXML2CONLLU_HEAP)m -jar lib/korapxml2conllu.jar
 SAXON ?= java -Djava.util.logging.config.file=/logging.properties -cp lib/saxon-ee-12.4.jar:lib/xmlresolver-5.2.2.jar:lib/textclassifier.jar:lib/xmlresolver-5.2.2-data.jar net.sf.saxon.Transform -expand:off
 
+
+
 .DELETE_ON_ERROR:
 
-.PHONY: all clean test i5 i5valid krill index deploy server-log server-status
+.PHONY: all clean test i5 i5valid krill index deploy show-server-log show-server-status
 
 .PRECIOUS: $(TARGET_DIR)/%.i5.xml $(TARGET_DIR)/dnb%.pre.i5.xml %.zip %.tree_tagger.zip %.ud.zip %.marmot-malt.zip %.spacy.zip %.i5.xml %.tar
-
 
 all: index
 
@@ -32,22 +31,16 @@ krill: $(foreach year,$(YEARS),$(TARGET_DIR)/dnb$(year).krill.tar)
 
 index: $(TARGET_DIR)/dnb.index
 
+EPUBS := $(wildcard $(SRC_DIR)/**/*.epub)
+
 $(TARGET_DIR)/dnb%.i5.xml: $(TARGET_DIR)/dnb%.pre.i5.xml  xslt/pass2.xsl xslt/pass3.xsl models/dereko_domains_s.classifier
 	$(SAXON) -xsl:xslt/pass2.xsl $< | $(SAXON) -xsl:xslt/pass3.xsl - > $@
 
-
-$(TARGET_DIR)/dnb%.pre.i5.xml: $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*.epub))
-	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*0.epub)) > $(TARGET_DIR)/filelist$*.txt
-	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*1.epub)) >> $(TARGET_DIR)/filelist$*.txt
-	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*2.epub)) >> $(TARGET_DIR)/filelist$*.txt
-	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*3.epub)) >> $(TARGET_DIR)/filelist$*.txt
-	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*4.epub)) >> $(TARGET_DIR)/filelist$*.txt
-	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*5.epub)) >> $(TARGET_DIR)/filelist$*.txt
-	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*6.epub)) >> $(TARGET_DIR)/filelist$*.txt
-	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*7.epub)) >> $(TARGET_DIR)/filelist$*.txt
-	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*8.epub)) >> $(TARGET_DIR)/filelist$*.txt
-	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*9.epub)) >> $(TARGET_DIR)/filelist$*.txt
-	@echo $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.xml,$(wildcard $(SRC_DIR)/*X.epub)) >> $(TARGET_DIR)/filelist$*.txt
+$(TARGET_DIR)/dnb%.pre.i5.xml: $(patsubst %.epub,$(TARGET_DIR)/%.i5.xml,$(notdir $(EPUBS)))
+	echo $(EPUBS)
+	@find $(SRC_DIR) -type f -name '*.epub' | while read src; do \
+		echo $(TARGET_DIR)/$$(basename $${src%.epub}).i5.xml; \
+	done | sort -u > $(TARGET_DIR)/filelist$*.txt
 	sed -i -e 's/ /\n/g; /^$$/d' $(TARGET_DIR)/filelist$*.txt
 	head -n -1 xslt/idsCorpus-template.xml | sed -e 's/{YY}/$*/' > $@
 	@while IFS= read -r f; do \
@@ -57,8 +50,6 @@ $(TARGET_DIR)/dnb%.pre.i5.xml: $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.x
 	done < $(TARGET_DIR)/filelist$*.txt
 	tail -n 1 xslt/idsCorpus-template.xml  >> $@
 
-test: YEARS := 13 18
-test: SRC_DIR=test/resources/DNB
 
 test: models/dereko_domains_s.classifier i5valid test/test-xml.sh
 	bash test/test-xml.sh
@@ -68,7 +59,8 @@ i5: $(foreach year,$(YEARS),$(TARGET_DIR)/dnb$(year).i5.xml)
 i5valid: i5
 	xmllint --noout --valid $(foreach year,$(YEARS),$(TARGET_DIR)/dnb$(year).i5.xml)
 
-$(BUILD_DIR)/%: $(SRC_DIR)/%.epub
+
+$(BUILD_DIR)/%: $(SRC_DIR)/**/%.epub
 	mkdir -p $@
 	echo "Converting $< to $@"
 	unzip -q -o $< -d $@
