@@ -57,6 +57,9 @@ $(TARGET_DIR)/dnb%.pre.i5.xml: $(patsubst $(SRC_DIR)/%.epub,$(TARGET_DIR)/%.i5.x
 	done < $(TARGET_DIR)/filelist$*.txt
 	tail -n 1 xslt/idsCorpus-template.xml  >> $@
 
+test: YEARS := 13 18
+test: SRC_DIR=test/resources/DNB
+
 test: models/dereko_domains_s.classifier i5valid test/test-xml.sh
 	bash test/test-xml.sh
 

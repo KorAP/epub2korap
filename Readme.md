@@ -2,6 +2,12 @@
 
 ## Run
 
+### Tests on local test data
+
+```bash
+make -j $(nproc) test
+```
+
 ### Generate an I5 corpus from the included test data
 
 ```bash
