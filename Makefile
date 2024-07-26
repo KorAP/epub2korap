@@ -101,7 +101,7 @@ models/dereko_domains_s.classifier:
 %.krill.tar: %.zip %.marmot-malt.zip %.tree_tagger.zip
 	mkdir -p ${BUILD_DIR}/krill/$(basename $@)
 	mkdir -p $(basename $@)
-	korapxml2krill archive --quiet -w -z -cfg krill-korap4dnb.cfg -c ${BUILD_DIR}/krill/$(basename $@)/korapxml2krill.cache -j $(MAX_THREADS) -te ${BUILD_DIR}/krill/$(basename $@) --non-word-tokens --meta I5 -i $< -i $(word 2,$^) -i $(word 3,$^) -o $(basename $@)
+	K2K_TRANSLATOR_TEXT=1 korapxml2krill archive --quiet -w -z -cfg krill-korap4dnb.cfg -c ${BUILD_DIR}/krill/$(basename $@)/korapxml2krill.cache -j $(MAX_THREADS) -te ${BUILD_DIR}/krill/$(basename $@) --non-word-tokens --meta I5 -i $< -i $(word 2,$^) -i $(word 3,$^) -o $(basename $@)
 
 %.json: %.krill.tar
 	rm -rf $@
