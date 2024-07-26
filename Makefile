@@ -2,7 +2,7 @@ ifneq (,$(filter test,$(MAKECMDGOALS)))
 SRC_DIR = test/resources/DNB
 YEARS=13 18
 else
-SRC_DIR ?= /mnt/data/KorAP@DNB
+SRC_DIR ?= ./DeLiKo@DNB
 YEARS ?= $(shell seq -w 2012 2024 | sed 's/^.*\([0-9][0-9]\)/\1/')
 endif
 
