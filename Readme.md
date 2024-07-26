@@ -1,23 +1,37 @@
 # EPub to KorAP (via TEI I5) conversion
 
-## Run
+## Testing
 
-### Tests on local test data
+### Run TEI I5 conversion tests on local test data
 
 ```bash
 make -j $(nproc) test
 ```
 
-### Generate an I5 corpus from the included test data
+### Build test index
 
 ```bash
-make -j $(nproc) target/dnb18.i5.xml SRC_DIR=test/resources/DNB YEARS=18
+make -j $(nproc) test index
 ```
+
+### Run local KorAP with test index
+
+```bash
+INDEX=./target/dnb.index docker compose -p korap4dnb --profile=lite -f korap4dnb-compose.yml up -d
+```
+
+### Stop local KorAP
+
+```bash
+docker compose -p korap4dnb down
+```
+
+## Running
 
 ### Generate all I5 corpora
 
 ```bash
-make -j $(nproc) i5  SRC_DIR=test/resources/DNB
+make -j $(nproc) i5
 ```
 
 ### Generate a KorAP-XML ZIP
@@ -38,16 +52,10 @@ The index will be in `target/dnb.index`.
 
 ### Run KorAP
 
-Adjust the following line in your `korap4dnb-compose.yml` to point to your index (it is in target/dnb.index by default, but should better be copied to a safe place):
-
-```yml
-      - "${PWD}/target/dnb.index:/kustvakt/index:z"
-```
-
 and start the docker:
 
 ```bash
-docker compose -p korap4dnb --profile=lite -f korap4dnb-compose.yml up -d
+INDEX=./target/dnb.index docker compose -p korap4dnb --profile=lite -f korap4dnb-compose.yml up -d
 ```
 
 ### Stop KorAP
