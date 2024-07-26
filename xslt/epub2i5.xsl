@@ -16,6 +16,8 @@
     <xsl:output method="xml" indent="yes" omit-xml-declaration="yes" saxon:line-length="1000"/>
     <xsl:strip-space elements="*"/>
 
+    <xsl:param name="debug"/>
+
     <xsl:variable name="ev"/>
     <xsl:variable name="x"/>
 
@@ -560,9 +562,11 @@
     </xsl:template>
 
      <xsl:template match="xhtml:body/xhtml:span">
-        <xsl:message>
-            <xsl:text>unhandled span element: </xsl:text><xsl:value-of select="concat(name(), ' ', string-join(./@*[normalize-space(.) != '']/concat(name(), ':', ., ' '), '_'))"/>
-        </xsl:message>
+        <xsl:if test="$debug">
+          <xsl:message>
+                <xsl:text>unhandled span element: </xsl:text><xsl:value-of select="concat(name(), ' ', string-join(./@*[normalize-space(.) != '']/concat(name(), ':', ., ' '), '_'))"/>
+            </xsl:message>
+        </xsl:if>
         <div type="section">
             <p>
               <xsl:value-of select="."/>
@@ -570,9 +574,11 @@
         </div>
     </xsl:template>
     <xsl:template match="xhtml:span">
-        <xsl:message>
-            <xsl:text>unhandled span element: </xsl:text><xsl:value-of select="concat(name(), ' ', string-join(./@*[normalize-space(.) != '']/concat(name(), ':', ., ' '), '_'))"/>
-        </xsl:message>
+        <xsl:if test="$debug">
+            <xsl:message>
+                <xsl:text>unhandled span element: </xsl:text><xsl:value-of select="concat(name(), ' ', string-join(./@*[normalize-space(.) != '']/concat(name(), ':', ., ' '), '_'))"/>
+            </xsl:message>
+        </xsl:if>
         <xsl:value-of select="."/>
     </xsl:template>
     <xsl:template match="xhtml:a">
@@ -588,9 +594,11 @@
     </xsl:template>
 
     <xsl:template match="xhtml:*">
-        <xsl:message>
-            <xsl:text>unhandled element: </xsl:text><xsl:value-of select="concat(name(), ' ', string-join(./@*[normalize-space(.) != '']/concat(name(), ':', ., ' '), '_'))"/>
-        </xsl:message>
+        <xsl:if test="$debug">
+            <xsl:message>
+                <xsl:text>unhandled element: </xsl:text><xsl:value-of select="concat(name(), ' ', string-join(./@*[normalize-space(.) != '']/concat(name(), ':', ., ' '), '_'))"/>
+            </xsl:message>
+        </xsl:if>
         <xsl:choose>
             <xsl:when test="descendant::xhtml:div|descendant::xhtml:p|parent::xhtml:body">
                 <div type="section">
