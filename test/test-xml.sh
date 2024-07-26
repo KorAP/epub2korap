@@ -20,7 +20,7 @@ observed=$(xmlstarlet sel --net -t -v "count(/idsCorpus/idsDoc/idsText/idsHeader
 assert_eq "$observed" "$TEXTS" "$I5_FILE contains $TEXTS non-empty h.author elements"
 
 observed=$(xmlstarlet sel --net -t -v "/idsCorpus/idsHeader/fileDesc/titleStmt/c.title" target/dnb13.i5.xml)
-assert_eq "$observed" "Deutsche Nationalbibliothek: Belletristik 2013" "c.title contains yeaar"
+assert_eq "$observed" "Deutsche Nationalbibliothek: Belletristik 2013 (DeLiKo@DNB)" "c.title contains year and DeLiKo@DNB"
 
 observed=$(xmlstarlet sel --net -t -v "count(/idsCorpus/idsDoc/idsText/idsHeader/fileDesc/sourceDesc/biblStruct/monogr/h.author[contains(., '[')])"  target/dnb13.i5.xml)
 assert_eq "$observed" "0" "authors do not contain []"
