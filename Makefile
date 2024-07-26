@@ -37,17 +37,15 @@ $(TARGET_DIR)/dnb%.i5.xml: $(TARGET_DIR)/dnb%.pre.i5.xml  xslt/pass2.xsl xslt/pa
 	$(SAXON) -xsl:xslt/pass2.xsl $< | $(SAXON) -xsl:xslt/pass3.xsl - > $@
 
 $(TARGET_DIR)/dnb%.pre.i5.xml: $(patsubst %.epub,$(TARGET_DIR)/%.i5.xml,$(notdir $(EPUBS)))
-	echo $(EPUBS)
-	@find $(SRC_DIR) -type f -name '*.epub' | while read src; do \
-		echo $(TARGET_DIR)/$$(basename $${src%.epub}).i5.xml; \
-	done | sort -u > $(TARGET_DIR)/filelist$*.txt
-	sed -i -e 's/ /\n/g; /^$$/d' $(TARGET_DIR)/filelist$*.txt
+	rm -f $(TARGET_DIR)/filelist$*.txt
 	head -n -1 xslt/idsCorpus-template.xml | sed -e 's/{YY}/$*/' > $@
-	@while IFS= read -r f; do \
-		if head -500 "$$f" | grep -Eq '<pubDate type="year">..$*'; then \
+	@find -L $(SRC_DIR) -type f -name '*.epub' | sort -u | while read src; do \
+		f=$(TARGET_DIR)/$$(basename $${src%.epub}).i5.xml; \
+		if ! grep -q "$$f" $(TARGET_DIR)/filelist$*.txt && head -500 "$$f" | grep -Eq '<pubDate type="year">..$*'; then \
+			echo $$f >> $(TARGET_DIR)/filelist$*.txt; \
 			cat "$$f" >> $@; \
 		fi; \
-	done < $(TARGET_DIR)/filelist$*.txt
+	done
 	tail -n 1 xslt/idsCorpus-template.xml  >> $@
 
 
