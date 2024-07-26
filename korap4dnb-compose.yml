@@ -12,7 +12,7 @@ services:
       - kustvakt
     volumes:
       - type: bind
-        source: /home/kupietz/epub2i5/html/robots.txt
+        source: ./html/robots.txt
         target: /kalamar/public/robots.txt
     profiles:
       - lite
@@ -57,10 +57,7 @@ services:
       - "8089:8089"
     user: root
     volumes:
-      - "/home/kupietz/epub2i5/dnb.index:/kustvakt/index:z"
-      - type: bind
-        source: "/home/yaddehige/epub2i5/data/"
-        target: /kustvakt/data/
+      - "${PWD}/dnb.index:/kustvakt/index:z"
     profiles:
       - lite
     restart: "unless-stopped"
@@ -70,9 +67,9 @@ services:
       - 8089
     user: root
     volumes:
-      - "/home/kupietz/epub2i5/dnb.index:/kustvakt/index:z"
+      - "${PWD}/dnb.index:/kustvakt/index:z"
       - type: bind
-        source: "/home/kupietz/epub2i5/data/"
+        source: "${PWD}/data/"
         target: /kustvakt/data/
     profiles:
       - full
