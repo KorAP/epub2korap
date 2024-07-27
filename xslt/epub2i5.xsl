@@ -402,9 +402,11 @@
 
     <xsl:template match="opf:item" mode="collect">
         <xsl:variable name="href" select="@href"/>
-        <xsl:message>
-            <xsl:text>converting: </xsl:text><xsl:value-of select="$href"/><xsl:text> </xsl:text><xsl:value-of select="$idno"/>
-        </xsl:message>
+        <xsl:if test="$debug">
+            <xsl:message>
+                <xsl:text>converting: </xsl:text><xsl:value-of select="$href"/><xsl:text> </xsl:text><xsl:value-of select="$idno"/>
+            </xsl:message>
+        </xsl:if>
         <xsl:apply-templates select="doc(resolve-uri($href, base-uri()))/xhtml:html/xhtml:body"/>
     </xsl:template>
 
