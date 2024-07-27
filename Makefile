@@ -106,9 +106,16 @@ models/dereko_domains_s.classifier:
 	mkdir -p $@
 	for f in $<; do tar -C $@ -xf $$f; done
 
-$(TARGET_DIR)/dnb.index: $(foreach year,$(YEARS),$(TARGET_DIR)/dnb$(year).json)
+
+.NOTPARALLEL: $(TARGET_DIR)/dnb.index
+
+$(TARGET_DIR)/dnb.index: $(foreach year,$(YEARS),$(TARGET_DIR)/dnb$(year).index)
+
+%.index: %.json
+	@echo "Addinng $< to index"
 	rm -rf $@
-	java -jar lib/Krill-Indexer.jar -c lib/krill.conf -i $(subst " ",;,$^) -o $@
+	java -jar lib/Krill-Indexer.jar -c lib/krill.conf -i $< -o $(TARGET_DIR)/dnb.index
+	touch $@
 
 $(TARGET_DIR)/dnb.index.tar.xz: $(TARGET_DIR)/dnb.index
 	tar -I 'xz -T0' -C $(dir $<) -cf $@ $(notdir $<)
