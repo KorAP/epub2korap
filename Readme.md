@@ -18,6 +18,8 @@ make -j $(nproc) test index
 
 ```bash
 INDEX=./target/dnb.index docker compose -p korap4dnb --profile=lite -f korap4dnb-compose.yml up -d
+
+xdg-open http://localhost:4000/?q=Test
 ```
 
 ### Stop local KorAP
