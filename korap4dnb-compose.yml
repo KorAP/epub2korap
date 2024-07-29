@@ -16,18 +16,6 @@ services:
     profiles:
       - lite
     restart: "unless-stopped"
-  full-init:
-    image: "korap/kalamar:latest-conv"
-    command: super_client_info kalamar /kalamar/data/super_client_info
-    volumes:
-      - type: bind
-        source: "${PWD}/data/"
-        target: "/kalamar/data"
-    profiles:
-      - full
-      - init
-    user: root
-    restart: "no"
   kustvakt:
     environment:
       - INDEX=${INDEX:-${PWD}/dnb.index}
