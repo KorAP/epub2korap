@@ -13,6 +13,9 @@ services:
       - type: bind
         source: ./html/robots.txt
         target: /kalamar/public/robots.txt
+      - type: bind
+        source: ./kalamar.conf
+        target: /kalamar/kalamar.conf
     profiles:
       - lite
     restart: "unless-stopped"
