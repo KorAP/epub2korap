@@ -20,7 +20,7 @@
 
     <xsl:variable name="ev"/>
     <xsl:variable name="x"/>
-
+    
     <xsl:variable name="idno" as="xs:string" select="replace(base-uri(), '.*/([0-9]{9,13}X?).*' , '$1')"/>
 
     <xsl:variable name="idno_type">
@@ -33,6 +33,8 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
+
+    <xsl:variable name="original_path" select="document(resolve-uri('../originalPath.xml', base-uri(/)))/originalPath"/>
     
     <xsl:variable name="dnbBookdataQuery" as="xs:string">
         <xsl:value-of disable-output-escaping="yes" select="concat('https://services.dnb.de/sru/dnb?version=1.1&amp;operation=searchRetrieve&amp;query=', $idno_type, '%3D', $idno, '&amp;recordSchema=oai_dc')"/>
@@ -373,6 +375,15 @@
                                     <biblScope type="vol"/>
                                     <biblScope type="volume-title"/>
                                 </monogr>
+                                <xsl:if test="matches($original_path, 'Buchpreis', 'i')">
+                                    <xsl:variable name="bookprize_year" as="xs:string" select="replace($original_path, '.*Buchpreis_?([0-9]{4}).*' , '$1')"/>
+                                    <xsl:element name="note">
+                                        <xsl:attribute name="type">award</xsl:attribute>
+                                        <xsl:attribute name="subtype">
+                                            <xsl:value-of select="concat('Deutscher Buchpreis ', $bookprize_year)"/>
+                                        </xsl:attribute>
+                                    </xsl:element>
+                                </xsl:if>
                             </biblStruct>
                             <reference assemblage="regular" type="complete"><xsl:value-of select="concat($sigle, ' ', $autor, ': ', $titel, '. ', $erscheinungsort, ': ', $verlag, ', ', $erscheinungsjahr)"/></reference>
                         </sourceDesc>
