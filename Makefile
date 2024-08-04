@@ -17,8 +17,6 @@ KORAPXML2CONLLU_HEAP ?= $(shell echo "$$(($(MAX_THREADS) * 2500))")
 KORAPXML2CONLLU ?= java -Xmx$(KORAPXML2CONLLU_HEAP)m -jar lib/korapxml2conllu.jar
 SAXON ?= java -Djava.util.logging.config.file=/logging.properties -cp lib/saxon-ee-12.5.jar:lib/xmlresolver-5.2.2.jar:lib/textclassifier.jar:lib/xmlresolver-5.2.2-data.jar net.sf.saxon.Transform -expand:off
 
-
-
 .DELETE_ON_ERROR:
 
 .PHONY: all clean test i5 i5valid krill index deploy show-server-log show-server-status
@@ -63,7 +61,7 @@ $(BUILD_DIR)/%: $(SRC_DIR)/**/%.epub
 	echo "Converting $< to $@"
 	unzip -q -o $< -d $@
 	chmod -R ug+rwX $@
-	echo "<originalPath>\"$<\"</originalPath>" > $@/originalPath.xml
+	echo "<originalPath>$<</originalPath>" > $@/originalPath.xml
 
 $(TARGET_DIR)/%.i5.xml: $(BUILD_DIR)/% xslt/epub2i5.xsl xslt/idsCorpus-template.xml
 	mkdir -p $(TARGET_DIR)
