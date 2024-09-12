@@ -402,24 +402,37 @@
                 </idsHeader>
                 <text>
                    <body>
-                    <!-- Call the template for each link in the TOC 
-                         <xsl:apply-templates select="//xhtml:ol[@class='toc']/xhtml:li/xhtml:a" mode="collect"/> -->
-                    <xsl:apply-templates select="//opf:package/opf:manifest/opf:item[exists(//opf:spine/opf:itemref/@idref=@id) and matches(@href, '\.x?html?$') and not(matches(@href, '(cover|toc|copyright|feedback|inhalt|nav|titlepage).*'))]" mode="collect"/>
+                        <!-- Call the template for each idref the spine -->
+                        <xsl:apply-templates select="//opf:spine/opf:itemref" mode="collect"/>
                     </body>
                 </text>
             </idsText>
         </idsDoc>
     </xsl:template>
 
-    <xsl:template match="opf:item" mode="collect">
-        <xsl:variable name="href" select="@href"/>
-        <xsl:if test="$debug">
-            <xsl:message>
-                <xsl:text>converting: </xsl:text><xsl:value-of select="$href"/><xsl:text> </xsl:text><xsl:value-of select="$idno"/>
-            </xsl:message>
-        </xsl:if>
-        <xsl:apply-templates select="doc(resolve-uri($href, base-uri()))/xhtml:html/xhtml:body"/>
-    </xsl:template>
+    <xsl:template match="opf:itemref" mode="collect">
+        <xsl:variable name="id" select="@idref"/>
+        <xsl:variable name="item"  select="//opf:manifest/opf:item[@id=$id and matches(@href, '\.x?html?$') and not(matches(@href, '(cover|toc|copyright|feedback|inhalt|nav|titlepage).*'))]"/>
+
+        <xsl:choose>
+            <xsl:when test = "$item">
+                <xsl:variable name="href" select="$item/@href"/>
+                <xsl:if test="$debug">
+                    <xsl:message>
+                        <xsl:text>converting: </xsl:text><xsl:value-of select="$id"/><xsl:text> </xsl:text><xsl:value-of select="$href"/><xsl:text> </xsl:text><xsl:value-of select="$idno"/>
+                    </xsl:message>
+                </xsl:if>
+                <xsl:apply-templates select="doc(resolve-uri($href, base-uri()))/xhtml:html/xhtml:body"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:if test="$debug">
+                    <xsl:message>
+                        <xsl:text>skipping: </xsl:text><xsl:value-of select="$id"/><xsl:text> </xsl:text><xsl:value-of select="$idno"/>
+                    </xsl:message>
+                </xsl:if>
+            </xsl:otherwise>
+        </xsl:choose>
+        </xsl:template>
 
     <xsl:template match="xhtml:body">
         <div type="chapter">
