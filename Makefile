@@ -21,6 +21,8 @@ SAXON ?= java -Djava.util.logging.config.file=/logging.properties -cp lib/saxon-
 
 .PHONY: all clean test i5 i5valid krill index deploy show-server-log show-server-status
 
+.NOTPARALLEL: index
+
 .PRECIOUS: $(TARGET_DIR)/%.i5.xml $(TARGET_DIR)/dnb%.pre.i5.xml %.zip %.tree_tagger.zip %.ud.zip %.marmot-malt.zip %.spacy.zip %.i5.xml %.tar
 
 all: index
@@ -106,7 +108,6 @@ models/dereko_domains_s.classifier:
 	for f in $<; do tar -C $@ -xf $$f; done
 
 
-.NOTPARALLEL: $(TARGET_DIR)/dnb.index
 
 $(TARGET_DIR)/dnb.index: $(foreach year,$(YEARS),$(TARGET_DIR)/dnb$(year).index)
 
