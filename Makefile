@@ -68,7 +68,9 @@ $(BUILD_DIR)/%: $(SRC_DIR)/**/%.epub
 $(TARGET_DIR)/%.i5.xml: $(BUILD_DIR)/% xslt/epub2i5.xsl xslt/idsCorpus-template.xml
 	mkdir -p $(TARGET_DIR)
 	echo "Converting $< to $@"
-	$(SAXON) -xsl:xslt/epub2i5.xsl $(shell find $< -name "*.opf") > $@ || (sleep 5 && $(SAXON) -xsl:xslt/epub2i5.xsl $(shell find $< -name "*.opf") > $@) || (echo "WARN: ignoring invalid $@" && > $@)
+	$(SAXON) -xsl:xslt/epub2i5.xsl $(shell find $< -name "*.opf")  $(shell if cat `find $< -name originalPath.xml` | grep -iq buchpreis; then echo buchpreis=1; fi)> $@ || \
+	(sleep 5 && $(SAXON) -xsl:xslt/epub2i5.xsl $(shell find $< -name "*.opf") $(shell if cat `find $< -name originalPath.xml` | grep -iq buchpreis; then echo buchpreis=1; fi) > $@) || (echo "WARN: ignoring invalid $@" && > $@)
+
 
 %.zip: %.i5.xml
 	tei2korapxml -l warn -s -tk - < $< > $@

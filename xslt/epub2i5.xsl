@@ -34,7 +34,7 @@
         </xsl:choose>
     </xsl:variable>
 
-    <xsl:variable name="original_path" select="document(resolve-uri('../originalPath.xml', base-uri(/)))/originalPath"/>
+    <xsl:param name="buchpreis"/>
     
     <xsl:variable name="dnbBookdataQuery" as="xs:string">
         <xsl:value-of disable-output-escaping="yes" select="concat('https://services.dnb.de/sru/dnb?version=1.1&amp;operation=searchRetrieve&amp;query=', $idno_type, '%3D', $idno, '&amp;recordSchema=oai_dc')"/>
@@ -382,7 +382,7 @@
                                     <biblScope type="vol"/>
                                     <biblScope type="volume-title"/>
                                 </monogr>
-                                <xsl:if test="matches($original_path, 'Buchpreis', 'i')">
+                                <xsl:if test="$buchpreis">
                                     <xsl:element name="note">
                                         <xsl:attribute name="type">award</xsl:attribute>
                                         <xsl:attribute name="subtype">
