@@ -78,7 +78,14 @@
         <xsl:variable name="title-with-subtitles">
             <xsl:choose>
                 <xsl:when test="contains(($dnbBookdata//dc:title)[1],':')">
-                    <xsl:value-of select="normalize-space(substring-before(substring-before(($dnbBookdata//dc:title)[1], '/'), ':'))"/>
+                    <xsl:choose>
+                        <xsl:when test="matches(($dnbBookdata//dc:title)[1], '.*/.*:.*/')">
+                            <xsl:value-of select="normalize-space(substring-before(($dnbBookdata//dc:title)[1], ':'))"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="normalize-space(substring-before(substring-before(($dnbBookdata//dc:title)[1], '/'), ':'))"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:value-of select="normalize-space(substring-before(($dnbBookdata//dc:title)[1], '/'))"/>
