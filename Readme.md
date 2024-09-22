@@ -28,7 +28,15 @@ xdg-open http://localhost:4000/?q=Test
 docker compose -p korap4dnb down
 ```
 
-## Running
+## Production
+
+### Build new KorAP index, just with prize winners index
+
+```bash
+make clean && time make -j $(( $(nproc) / 2 )) index SRC_DIR=./Buchpreis
+```
+
+The index will be in `target/dnb.index`.
 
 ### Generate all I5 corpora
 
