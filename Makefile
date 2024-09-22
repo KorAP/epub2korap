@@ -21,7 +21,6 @@ SAXON ?= java -Djava.util.logging.config.file=/logging.properties -cp lib/saxon-
 
 .PHONY: all clean test i5 i5valid krill index deploy show-server-log show-server-status
 
-.NOTPARALLEL: index
 
 .PRECIOUS: $(TARGET_DIR)/%.i5.xml $(TARGET_DIR)/dnb%.pre.i5.xml %.zip %.tree_tagger.zip %.ud.zip %.marmot-malt.zip %.spacy.zip %.i5.xml %.tar
 
@@ -110,13 +109,6 @@ models/dereko_domains_s.classifier:
 
 
 
-$(TARGET_DIR)/dnb.index: $(foreach year,$(YEARS),$(TARGET_DIR)/dnb$(year).index)
-
-%.index: %.json
-	@echo "Addinng $< to index"
-	rm -rf $@
-	java -jar lib/Krill-Indexer.jar -c lib/krill.conf -i $< -o $(TARGET_DIR)/dnb.index
-	touch $@
 
 $(TARGET_DIR)/dnb.index.tar.xz: $(TARGET_DIR)/dnb.index
 	tar -I 'xz -T0' -C $(dir $<) -cf $@ $(notdir $<)
@@ -133,3 +125,8 @@ show-server-status:
 
 clean:
 	rm -rf $(BUILD_DIR) $(TARGET_DIR)
+
+$(TARGET_DIR)/dnb.index: $(foreach year,$(YEARS),$(TARGET_DIR)/dnb$(year).json)
+	rm -rf $@
+	java -jar lib/Krill-Indexer.jar -c lib/krill.conf -i $(subst " ",;,$^) -o $@
+
