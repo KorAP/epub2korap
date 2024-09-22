@@ -59,16 +59,17 @@ i5valid: i5
 
 
 $(BUILD_DIR)/%: $(SRC_DIR)/**/%.epub
-	mkdir -p $@
+	mkdir -p $@.tmp
 	echo "Converting $< to $@"
-	unzip -q -o $< -d $@
-	chmod -R ug+rwX $@
-	echo "<originalPath>$<</originalPath>" > $@/originalPath.xml
+	echo "<originalPath>$<</originalPath>" > $@.tmp/originalPath.xml
+	unzip -q -o $< -d $@.tmp
+	chmod -R ug+rwX $@.tmp
+	mv $@.tmp $@
 
 $(TARGET_DIR)/%.i5.xml: $(BUILD_DIR)/% xslt/epub2i5.xsl xslt/idsCorpus-template.xml
 	mkdir -p $(TARGET_DIR)
 	echo "Converting $< to $@"
-	$(SAXON) -xsl:xslt/epub2i5.xsl $(shell find $< -name "*.opf") > $@ || (echo "WARN: ignoring invalid $@" && > $@)
+	$(SAXON) -xsl:xslt/epub2i5.xsl $(shell find $< -name "*.opf") > $@ || (sleep 5 && $(SAXON) -xsl:xslt/epub2i5.xsl $(shell find $< -name "*.opf") > $@) || (echo "WARN: ignoring invalid $@" && > $@)
 
 %.zip: %.i5.xml
 	tei2korapxml -l warn -s -tk - < $< > $@
