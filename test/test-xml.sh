@@ -50,7 +50,7 @@ assert_eq "$observed" "$min_expected" "exvery text has one idno element of type 
 observed=$(xmlstarlet sel --net -t -v "count(/idsCorpus/idsDoc/idsText/idsHeader/fileDesc/publicationStmt/idno[@type='URL' and starts-with(@rend, 'URN;urn:nbn:de:')])"  target/dnb18.i5.xml)
 assert_eq "$observed" "$min_expected" "for every idno element of type URN, there is also an URL element with @rend starting with 'URN;urn:nbn:de:'"
 
-observed=$(xmlstarlet sel --net -t -v "count(/idsCorpus/idsDoc/idsText/idsHeader/fileDesc/sourceDesc/biblStruct/note[@type='award'][@subtype='Deutscher Buchpreis 2024'])"  target/dnb13.i5.xml)
+observed=$(xmlstarlet sel --net -t -v "count(/idsCorpus/idsDoc/idsText/idsHeader/fileDesc/sourceDesc/biblStruct/note[@type='award'][@subtype='Buchpreis deutscher_buchpreis'])"  target/dnb13.i5.xml)
 assert_eq "$observed" "1" "award is correctly identified'"
 
 observed=$(xmlstarlet sel --net -t -v "count(/idsCorpus/idsDoc/idsText/idsHeader/fileDesc/sourceDesc/biblStruct/note[@type='award'])"  target/dnb18.i5.xml)

@@ -383,11 +383,10 @@
                                     <biblScope type="volume-title"/>
                                 </monogr>
                                 <xsl:if test="matches($original_path, 'Buchpreis', 'i')">
-                                    <xsl:variable name="bookprize_year" as="xs:string" select="replace($original_path, '.*Buchpreis_?([0-9]{4}).*' , '$1')"/>
                                     <xsl:element name="note">
                                         <xsl:attribute name="type">award</xsl:attribute>
                                         <xsl:attribute name="subtype">
-                                            <xsl:value-of select="concat('Deutscher Buchpreis ', $bookprize_year)"/>
+                                            <xsl:value-of select="'Buchpreis deutscher_buchpreis'"/>
                                         </xsl:attribute>
                                     </xsl:element>
                                 </xsl:if>
