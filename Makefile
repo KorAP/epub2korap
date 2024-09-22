@@ -16,7 +16,7 @@ MAX_THREADS ?= $(shell nproc)
 MAKE ?= make -j $(shell nproc)
 KORAPXML2CONLLU_HEAP ?= $(shell echo "$$(($(MAX_THREADS) * 2500))")
 KORAPXML2CONLLU ?= java -Xmx$(KORAPXML2CONLLU_HEAP)m -jar lib/korapxml2conllu.jar
-SAXON ?= java -Djava.util.logging.config.file=/logging.properties -cp lib/saxon-ee-12.5.jar:lib/xmlresolver-5.2.2.jar:lib/textclassifier.jar:lib/xmlresolver-5.2.2-data.jar net.sf.saxon.Transform -expand:off -catalog:"lib/dtds/xhtml11/xhtmlcatalog.xml;lib/dtds/xhtml/dtd/xhtmlcatalog.xml"
+SAXON ?= java -Djava.util.logging.config.file=/logging.properties -cp lib/saxon-ee-12.5.jar:lib/xmlresolver-5.2.2.jar:lib/textclassifier.jar:lib/xmlresolver-5.2.2-data.jar net.sf.saxon.Transform -expand:off -catalog:"org/xmlresolver/catalog.xml"
 
 .DELETE_ON_ERROR:
 
