@@ -5,7 +5,7 @@ ASSERTSH=${TESTDIR}/assert.sh
 . ${ASSERTSH}
 ERRORS=0
 PASSED=0
-TEXTS=6
+TEXTS=7
 I5_FILE=target/dnb18.i5.xml
 if [ ! -f "$I5_FILE" ]; then
   log_failure "File $I5_FILE does not exist"
@@ -55,6 +55,12 @@ assert_eq "$observed" "1" "award is correctly identified'"
 
 observed=$(xmlstarlet sel --net -t -v "count(/idsCorpus/idsDoc/idsText/idsHeader/fileDesc/sourceDesc/biblStruct/note[@type='award'])"  target/dnb18.i5.xml)
 assert_eq "$observed" "0" "no falsely identified awards'"
+
+observed=$(xmlstarlet sel --net -t -v "count(/idsCorpus/idsDoc/idsText/idsHeader/fileDesc/publicationStmt/idno[@type='IDN' and .='8999999999'])"  target/dnb18.i5.xml)
+assert_eq "$observed" "1" "epub 8... id and without API metadata is transformed"
+
+observed=$(xmlstarlet sel --net -t -v "count(/idsCorpus/idsDoc/idsText/idsHeader/fileDesc[publicationStmt/idno[@type='IDN' and .='8999999999']]/sourceDesc//h.title[.='Herzblut'])"  target/dnb18.i5.xml)
+assert_eq "$observed" "1" "static metadata for epub with 8... id is correctly retrieved"
 
 exit_with_test_summary
 

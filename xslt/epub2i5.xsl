@@ -40,7 +40,7 @@
         <xsl:value-of disable-output-escaping="yes" select="concat('https://services.dnb.de/sru/dnb?version=1.1&amp;operation=searchRetrieve&amp;query=', $idno_type, '%3D', $idno, '&amp;recordSchema=oai_dc')"/>
     </xsl:variable>
     <xsl:variable name="dnbBookdata">
-      <xsl:copy-of select="doc($dnbBookdataQuery)"/>
+      <xsl:copy-of select="if(starts-with($idno, '8')) then doc('static_metadata.xml')//oai:dc[dc:identifier=$idno] else doc($dnbBookdataQuery)"/>
     </xsl:variable>
 
     <xsl:variable name="autor"
