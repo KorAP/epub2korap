@@ -62,6 +62,9 @@ assert_eq "$observed" "1" "epub 8... id and without API metadata is transformed"
 observed=$(xmlstarlet sel --net -t -v "count(/idsCorpus/idsDoc/idsText/idsHeader/fileDesc[publicationStmt/idno[@type='IDN' and .='8999999999']]/sourceDesc//h.title[.='Herzblut'])"  target/dnb18.i5.xml)
 assert_eq "$observed" "1" "static metadata for epub with 8... id is correctly retrieved"
 
+xmllint -noout xslt/static_metadata.xml
+assert_eq "$?" "0" "static_metadata.xml is well-formed"
+
 exit_with_test_summary
 
 
