@@ -1,6 +1,6 @@
 ifneq (,$(filter test,$(MAKECMDGOALS)))
 SRC_DIR = test/resources/DNB
-YEARS=13 18
+YEARS=13 18 23
 else
 SRC_DIR ?= ./DeLiKo@DNB
 #YEARS ?= $(shell seq -w 2012 2024 | sed 's/^.*\([0-9][0-9]\)/\1/')
@@ -41,7 +41,7 @@ $(TARGET_DIR)/dnb%.pre.i5.xml: $(patsubst %.epub,$(TARGET_DIR)/%.i5.xml,$(notdir
 	head -n -1 xslt/idsCorpus-template.xml | sed -e 's/{YY}/$*/' > $@
 	@find -L $(SRC_DIR) -type f -name '*.epub' | sort -u | while read src; do \
 		f=$(TARGET_DIR)/$$(basename $${src%.epub}).i5.xml; \
-		if ! grep -q "$$f" $(TARGET_DIR)/filelist$*.txt && head -500 "$$f" | grep -Eq '<pubDate type="year">..$*'; then \
+		if ! grep -sq "$$f" $(TARGET_DIR)/filelist$*.txt && head -500 "$$f" | grep -Eq '<pubDate type="year">..$*'; then \
 			echo $$f >> $(TARGET_DIR)/filelist$*.txt; \
 			cat "$$f" >> $@; \
 		fi; \
