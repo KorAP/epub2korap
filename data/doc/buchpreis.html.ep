@@ -30,6 +30,10 @@
   margin-top:0;
 }
 
+pre {
+  clear: both;
+}
+
 @media all and (max-width: 42.5em) {
   #dnb-logo {
     width: 75%;
