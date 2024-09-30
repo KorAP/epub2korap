@@ -40,6 +40,11 @@
         <xsl:value-of disable-output-escaping="yes" select="concat('https://services.dnb.de/sru/dnb?version=1.1&amp;operation=searchRetrieve&amp;query=', $idno_type, '%3D', $idno, '&amp;recordSchema=oai_dc')"/>
     </xsl:variable>
     <xsl:variable name="dnbBookdata">
+      <xsl:if test="$debug">
+        <xsl:message select="concat('debug message dnbBookdataQuery: ', $dnbBookdataQuery)"/>
+        <xsl:message select="concat('debug message idno: ', $idno)"/>
+        <xsl:message select="concat('debug message original title from static metadata: ', if(starts-with($idno, '8')) then doc('static_metadata.xml')//oai:dc[dc:identifier=$idno]//dc:title else '')"/>
+      </xsl:if>
       <xsl:copy-of select="if(starts-with($idno, '8')) then doc('static_metadata.xml')//oai:dc[dc:identifier=$idno] else doc($dnbBookdataQuery)"/>
     </xsl:variable>
 
@@ -76,6 +81,9 @@
 
     <xsl:variable name="titel">
         <xsl:variable name="title-with-subtitles">
+           <xsl:if test="$debug">
+                <xsl:message select="concat('title: ', ($dnbBookdata//dc:title)[1])"/>
+            </xsl:if>
             <xsl:choose>
                 <xsl:when test="contains(($dnbBookdata//dc:title)[1],':')">
                     <xsl:choose>
@@ -290,6 +298,15 @@
             <xsl:copy-of select="$dnbBookdata"/>
         </xsl:message>
         -->
+        <xsl:if  test="not($dnbBookdata//oai:dc)">
+            <xsl:message terminate="yes" default-mode="text">ERROR: No metadata found for IDNO: <xsl:value-of select="$idno"/>
+            <xsl:text>&#10;Query was: </xsl:text>
+            <xsl:value-of disable-output-escaping="yes" select="replace($dnbBookdataQuery, '&amp;', '%38')"/>
+           <xsl:text>&#10;Retrieved response: </xsl:text>
+             <xsl:copy-of select="$dnbBookdata"/>
+            </xsl:message>
+        </xsl:if>
+
         <xsl:if test="not($j)">
             <xsl:message terminate="yes">ERROR: No dc:date found for IDNO: <xsl:value-of select="$idno"/></xsl:message>
         </xsl:if>
