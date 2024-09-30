@@ -61,13 +61,21 @@
   </g>
 </svg>
 
-
-<p>Anlässlich des 20-jährigen Jubiläums des Deutschen Buchpreises können Sie hier alle digital verfügbaren 365 Longlist-Titel zu wissenschaftlichen Zwecken online im Volltext nach sprachlichen Mustern und Strukturen durchsuchen.</p>
-<p>Bereitgestellt wird diese besondere Sammlung zeitgenössischer deutschsprachiger Literatur von der Deutschen Nationalbibliothek (DNB) und dem Leibniz-Institut für Deutsche Sprache (IDS) – mit freundlicher Unterstützung des Börsenvereins des Deutschen Buchhandels e.V., der den Deutschen Buchpreis ausrichtet.</p>
+<p>Anlässlich des 20-jährigen Jubiläums des <%= ext_link_to 'Deutschen Buchpreises', 'https://www.deutscher-buchpreis.de/' %> können Sie hier alle digital verfügbaren 365 Longlist-Titel zu wissenschaftlichen Zwecken online im Volltext nach sprachlichen Mustern und Strukturen durchsuchen.</p>
+<p>Bereitgestellt wird diese besondere Sammlung zeitgenössischer deutschsprachiger Literatur von der <%= ext_link_to 'Deutschen Nationalbibliothek', 'https://www.dnb.de/DE/Home/home_node.html' %> (DNB) und dem <%= ext_link_to 'Leibniz-Institut für Deutsche Sprache', 'https://www.ids-mannheim.de/' %> (IDS) – mit freundlicher Unterstützung des <%= ext_link_to 'Börsenvereins des Deutschen Buchhandels e.V.', 'https://www.boersenverein.de/' %>, der den Deutschen Buchpreis ausrichtet.</p>
 <p>Alle Texte sind automatisch mit detaillierten Annotationen versehen, die Informationen zu Grundform (Lemma) und Wortart (Part of Speech) jedes Wortes enthalten, was komplexe wissenschaftliche Suchanfragen ermöglicht, um diese wertvolle Sammlung von Literatur digital zu erkunden und neue Erkenntnisse zu gewinnen.</p>
-<p>Probieren Sie es einfach aus und geben Sie Ihre Anfrage in den Suchschlitz oben ein. Unsere Tour begleitet Sie auf Wunsch bei den ersten Schritten – oder Sie lesen unsere Einführung!</p>
+<p>Probieren Sie es einfach aus und geben Sie Ihre Anfrage in den Suchschlitz oben ein. Unsere <a id="link-guided-tour">Tour</a> begleitet Sie auf Wunsch bei den ersten Schritten – oder Sie lesen unsere <%= doc_opener 'ql', begin %>Einführung<% end %>!</p>
+
+<p>Als Einstieg können Sie beispielsweise nach einzelnen Begriffen suchen:</p>
+
+%= doc_query poliqarp => loc('Brexit', 'Brexit')
+
+<p>Oder nach komplexen Phrasen:</p>
+
+%= doc_query poliqarp => loc('[tt/p=ART][tt/p=ADJA][orth=Europa]', '[tt/p=ART][tt/p=ADJA][orth=Europa]')
+
 
 <h2>Über KorAP</h2>
 <p>Dank der Korpus-Analyseplattform KorAP, bereitgestellt vom IDS und installiert auf der Infrastruktur der DNB, können Sie nun in die Welt ausgezeichneter Literatur eintauchen.</p>
 <p>KorAP ist eine open-source Korpusanalyseplattform, optimiert für große, mehrfach annotierte Korpora und komplexe Suchmechanismen. Dabei versucht KorAP unabhängig von spezifischen Forschungsfragen zu sein. Die Plattform wird zur wissenschaftlichen Suche in mehr als 100 Korpora an verschiedenen Orten eingesetzt, darunter am IDS für das Deutsche Referenzkorpus DeReKo und an der DNB für das Literaturkorpus, das neben den Texten des Deutschen Buchpreises auch weitere belletristische Texte enthalten wird.</p>
-<p>Mit der prototypischen Implementierung von KorAP@DNB erproben DNB und IDS im Rahmen ihrer Zusammenarbeit im Konsortium Text+ der Nationalen Forschungsdateninfrastruktur (NFDI) eine Möglichkeit der übergreifenden Suche in ortsverteilt archivierten Text- und Sprachdaten.</p>
+<p>Mit der prototypischen Implementierung von KorAP@DNB erproben DNB und IDS im Rahmen ihrer Zusammenarbeit im Konsortium  <%= ext_link_to 'Text+', "https://text-plus.org/" %> der <%= ext_link_to 'Nationalen Forschungsdateninfrastruktur', 'https://www.nfdi.de/' %> (NFDI) eine Möglichkeit der übergreifenden Suche in ortsverteilt archivierten Text- und Sprachdaten.</p>
