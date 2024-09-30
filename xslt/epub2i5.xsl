@@ -45,7 +45,8 @@
         <xsl:message select="concat('debug message idno: ', $idno)"/>
         <xsl:message select="concat('debug message original title from static metadata: ', if(starts-with($idno, '8')) then doc('static_metadata.xml')//oai:dc[dc:identifier=$idno]//dc:title else '')"/>
       </xsl:if>
-      <xsl:copy-of select="if(starts-with($idno, '8')) then doc('static_metadata.xml')//oai:dc[dc:identifier=$idno] else doc($dnbBookdataQuery)"/>
+      <xsl:variable name="tmp" select="if(starts-with($idno, '8')) then doc('static_metadata.xml')//oai:dc[dc:identifier=$idno] else doc($dnbBookdataQuery)"/>
+      <xsl:copy-of select="if($tmp//dc:title) then $tmp else doc('static_metadata.xml')//oai:dc[replace(dc:identifier[@xsi:type='tel:ISBN'][1], '-',  '')=$idno]"/>
     </xsl:variable>
 
     <xsl:variable name="autor"

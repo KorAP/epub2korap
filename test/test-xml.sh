@@ -65,6 +65,12 @@ assert_eq "$observed" "1" "static metadata for epub with 8... id is correctly re
 xmllint -noout xslt/static_metadata.xml
 assert_eq "$?" "0" "static_metadata.xml is well-formed"
 
+observed=$(xmlstarlet sel --net -t -v "count(/idsCorpus/idsDoc/idsText/idsHeader/fileDesc[publicationStmt/idno[@type='IDN' and .='8000000009']]/sourceDesc//h.title[.='Ein Hund kam in die Küche'])"  target/dnb23.i5.xml)
+assert_eq "$observed" "1" "static metadata is also used as fallback by ISBN and via symbolic link"
+
+observed=$(xmlstarlet sel --net -t -v "count(/idsCorpus/idsDoc/idsText/idsHeader/fileDesc/sourceDesc/biblStruct/note[@type='award'][@subtype='Buchpreis deutscher_buchpreis'])"  target/dnb23.i5.xml)
+assert_eq "$observed" "1" "award is also correctly identified for static metadata epubs"
+
 exit_with_test_summary
 
 
