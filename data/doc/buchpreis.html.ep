@@ -64,7 +64,7 @@ pre {
   </g>
 </svg>
 
-<p>Anlässlich des 20-jährigen Jubiläums des <%= ext_link_to 'Deutschen Buchpreises', 'https://www.deutscher-buchpreis.de/' %> können Sie hier alle digital verfügbaren 365 Longlist-Titel zu wissenschaftlichen Zwecken online im Volltext nach sprachlichen Mustern und Strukturen durchsuchen.</p>
+<p>Anlässlich des 20-jährigen Jubiläums des <%= ext_link_to 'Deutschen Buchpreises', 'https://www.deutscher-buchpreis.de/' %> können Sie hier alle digital verfügbaren 353 Longlist-Titel zu wissenschaftlichen Zwecken online im Volltext nach sprachlichen Mustern und Strukturen durchsuchen.</p>
 <p>Bereitgestellt wird diese besondere Sammlung zeitgenössischer deutschsprachiger Literatur von der <%= ext_link_to 'Deutschen Nationalbibliothek', 'https://www.dnb.de/DE/Home/home_node.html' %> (DNB) und dem <%= ext_link_to 'Leibniz-Institut für Deutsche Sprache', 'https://www.ids-mannheim.de/' %> (IDS) – mit freundlicher Unterstützung des <%= ext_link_to 'Börsenvereins des Deutschen Buchhandels e.V.', 'https://www.boersenverein.de/' %>, der den Deutschen Buchpreis ausrichtet.</p>
 <p>Alle Texte sind automatisch mit detaillierten Annotationen versehen, die Informationen zu Grundform (Lemma) und Wortart (Part of Speech) jedes Wortes enthalten, was komplexe wissenschaftliche Suchanfragen ermöglicht, um diese wertvolle Sammlung von Literatur digital zu erkunden und neue Erkenntnisse zu gewinnen.</p>
 <p>Probieren Sie es einfach aus und geben Sie Ihre Anfrage in den Suchschlitz oben ein. Unsere <a id="link-guided-tour">Tour</a> begleitet Sie auf Wunsch bei den ersten Schritten – oder Sie lesen unsere <%= doc_opener 'ql', begin %>Einführung<% end %>!</p>
