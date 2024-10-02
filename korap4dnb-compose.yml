@@ -19,6 +19,9 @@ services:
       - type: bind
         source: ./data/doc/buchpreis.html.ep
         target: /kalamar/templates/custom/doc/buchpreis.html.ep
+      - type: bind
+        source: ./data/doc/intro.html.ep
+        target: /kalamar/templates/custom/intro.html.ep
     profiles:
       - lite
     restart: "unless-stopped"
