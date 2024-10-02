@@ -22,6 +22,7 @@
 </script>
 
 <style>
+
 #dnb-logo {
   display: block;
   width: 300px;
@@ -34,11 +35,40 @@ pre {
   clear: both;
 }
 
+.example-queries {
+  max-width: 80em;
+  display: flex;
+  justify-content: space-between;
+  column-gap: 4rem;
+}
+
+.example-queries > div {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  justify-content: space-between;
+}
+
+hr {
+  margin: 2rem 0;
+  border: 2px solid #636f07;
+}
+
 @media all and (max-width: 42.5em) {
   #dnb-logo {
     width: 75%;
     margin: 0 auto;
     float: none;
+  }
+  .example-queries {
+    flex-direction: column;
+  }
+  .example-queries > div {
+    width: 100%;
+  }
+
+  hr {
+    margin: 2rem 0 1rem 0;
   }
 }
 </style>
@@ -70,13 +100,20 @@ pre {
 <p>Alle Texte sind automatisch mit detaillierten Annotationen versehen, die Informationen zu Grundform (Lemma) und Wortart (Part of Speech) jedes Wortes enthalten, was komplexe wissenschaftliche Suchanfragen ermöglicht, um diese wertvolle Sammlung von Literatur digital zu erkunden und neue Erkenntnisse zu gewinnen.</p>
 <p>Probieren Sie es einfach aus und geben Sie Ihre Anfrage in den Suchschlitz oben ein. Unsere <a id="link-guided-tour">Tour</a> begleitet Sie auf Wunsch bei den ersten Schritten – oder Sie lesen unsere <%= doc_opener 'ql', begin %>Einführung<% end %>!</p>
 
-<p>Als Einstieg können Sie beispielsweise nach einzelnen Begriffen suchen:</p>
 
-%= doc_query poliqarp => loc('Favorit', 'Favorit')
+<div class="example-queries">
+  <div>
+    <p>Als Einstieg können Sie beispielsweise nach einzelnen Begriffen suchen:</p>
+    %= doc_query poliqarp => loc('Favorit', 'Favorit')
+  </div>
+  <div>
+    <p>Oder nach komplexen Phrasen:</p>
+    %= doc_query poliqarp => loc('[tt/p=ART][tt/p=ADJA][orth=Spannung]', '[tt/p=ART][tt/p=ADJA][orth=Spannung]')
+  </div>
+</div>
 
-<p>Oder nach komplexen Phrasen:</p>
 
-%= doc_query poliqarp => loc('[tt/p=ART][tt/p=ADJA][orth=Spannung]', '[tt/p=ART][tt/p=ADJA][orth=Spannung]')
+<hr />
 
 
 <h2>Über KorAP</h2>
