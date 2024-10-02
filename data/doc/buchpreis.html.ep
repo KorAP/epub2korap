@@ -72,11 +72,11 @@ pre {
 
 <p>Als Einstieg können Sie beispielsweise nach einzelnen Begriffen suchen:</p>
 
-%= doc_query poliqarp => loc('Brexit', 'Brexit')
+%= doc_query poliqarp => loc('Favorit', 'Favorit')
 
 <p>Oder nach komplexen Phrasen:</p>
 
-%= doc_query poliqarp => loc('[tt/p=ART][tt/p=ADJA][orth=Europa]', '[tt/p=ART][tt/p=ADJA][orth=Europa]')
+%= doc_query poliqarp => loc('[tt/p=ART][tt/p=ADJA][orth=Spannung]', '[tt/p=ART][tt/p=ADJA][orth=Spannung]')
 
 
 <h2>Über KorAP</h2>
