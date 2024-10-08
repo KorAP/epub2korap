@@ -1,0 +1,15 @@
+[Unit]
+Description=DeLiKo@DNB Docker Compose Service
+After=docker.service
+Requires=docker.service
+
+[Service]
+WorkingDirectory=/home/kupietz/epub2i5
+Environment=INDEX=./dnb.index
+ExecStart=/usr/bin/docker compose -p korap4dnb --profile=lite -f korap4dnb-compose.yml up -d
+ExecStop=/usr/bin/docker compose -p korap4dnb -f korap4dnb-compose.yml down
+Restart=always
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target
