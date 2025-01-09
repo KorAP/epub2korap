@@ -299,6 +299,8 @@
             <xsl:copy-of select="$dnbBookdata"/>
         </xsl:message>
         -->
+        
+                
         <xsl:if  test="not($dnbBookdata//oai:dc)">
             <xsl:message terminate="yes" default-mode="text">ERROR: No metadata found for IDNO: <xsl:value-of select="$idno"/>
             <xsl:text>&#10;Query was: </xsl:text>
@@ -416,9 +418,15 @@
                         </sourceDesc>
                     </fileDesc>
                     <profileDesc>
-                        <creation>
+                        <!-- outcommented HL -->
+                        <!--creation>
                             <creatDate><xsl:value-of select="$j"/></creatDate>
-                        </creation>
+                        </creation-->
+                        <!-- BEGIN HL -->
+                        <xsl:call-template name="creation_temp">
+                            <xsl:with-param name="j" select="$j"/>
+                        </xsl:call-template>
+                        <!-- END HL -->
                         <textClass/>
                         <textDesc>
                             <textType><xsl:value-of select="$textFullGenre"/></textType>
@@ -436,6 +444,15 @@
             </idsText>
         </idsDoc>
     </xsl:template>
+    
+    <!-- BEGIN HL -->
+    <xsl:template name="creation_temp">
+        <xsl:param name="j"/>
+        <creation>
+            <creatDate><xsl:value-of select="$j"/></creatDate>
+        </creation>
+    </xsl:template>
+    <!-- END HL -->
 
     <xsl:template match="opf:itemref" mode="collect">
         <xsl:variable name="id" select="@idref"/>
