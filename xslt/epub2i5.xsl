@@ -1,17 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:xs="http://www.w3.org/2001/XMLSchema"
-                xmlns:opf="http://www.idpf.org/2007/opf"
-                xmlns:dc="http://purl.org/dc/elements/1.1/"
-                xmlns:ids="http://www.ids-mannheim.de/ids"
-                xmlns:hlu="http://www.ids-mannheim.de/hlu"
-                xmlns:saxon="http://saxon.sf.net/"
-                xmlns:xhtml="http://www.w3.org/1999/xhtml"
-                xmlns:map="http://www.w3.org/2005/xpath-functions/map"
-                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                xmlns:srw="http://www.loc.gov/zing/srw/"
-                xmlns:oai="http://www.openarchives.org/OAI/2.0/oai_dc/"
-                exclude-result-prefixes="xs opf dc ids hlu map saxon xhtml xsi srw oai">
+<xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:opf="http://www.idpf.org/2007/opf"
+    xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:ids="http://www.ids-mannheim.de/ids" xmlns:hlu="http://www.ids-mannheim.de/hlu" xmlns:saxon="http://saxon.sf.net/"
+    xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:map="http://www.w3.org/2005/xpath-functions/map" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:srw="http://www.loc.gov/zing/srw/"
+    xmlns:oai="http://www.openarchives.org/OAI/2.0/oai_dc/" exclude-result-prefixes="xs opf dc ids hlu map saxon xhtml xsi srw oai">
 
     <xsl:output method="xml" indent="yes" omit-xml-declaration="yes" saxon:line-length="1000"/>
     <xsl:strip-space elements="*"/>
@@ -20,12 +11,12 @@
 
     <xsl:variable name="ev"/>
     <xsl:variable name="x"/>
-    
-    <xsl:variable name="idno" as="xs:string" select="replace(base-uri(), '.*/([0-9]{9,13}X?).*' , '$1')"/>
+
+    <xsl:variable name="idno" as="xs:string" select="replace(base-uri(), '.*/([0-9]{9,13}X?).*', '$1')"/>
 
     <xsl:variable name="idno_type">
         <xsl:choose>
-            <xsl:when test="starts-with($idno,'1')">
+            <xsl:when test="starts-with($idno, '1')">
                 <xsl:value-of select="'IDN'"/>
             </xsl:when>
             <xsl:otherwise>
@@ -35,30 +26,40 @@
     </xsl:variable>
 
     <xsl:param name="buchpreis"/>
-    
+
     <xsl:variable name="dnbBookdataQuery" as="xs:string">
-        <xsl:value-of disable-output-escaping="yes" select="concat('https://services.dnb.de/sru/dnb?version=1.1&amp;operation=searchRetrieve&amp;query=', $idno_type, '%3D', $idno, '&amp;recordSchema=oai_dc')"/>
+        <xsl:value-of disable-output-escaping="yes"
+            select="concat('https://services.dnb.de/sru/dnb?version=1.1&amp;operation=searchRetrieve&amp;query=', $idno_type, '%3D', $idno, '&amp;recordSchema=oai_dc')"/>
     </xsl:variable>
     <xsl:variable name="dnbBookdata">
-      <xsl:if test="$debug">
-        <xsl:message select="concat('debug message dnbBookdataQuery: ', $dnbBookdataQuery)"/>
-        <xsl:message select="concat('debug message idno: ', $idno)"/>
-        <xsl:message select="concat('debug message original title from static metadata: ', if(starts-with($idno, '8')) then doc('static_metadata.xml')//oai:dc[dc:identifier=$idno]//dc:title else '')"/>
-      </xsl:if>
-      <xsl:variable name="tmp" select="if(starts-with($idno, '8')) then doc('static_metadata.xml')//oai:dc[dc:identifier=$idno] else doc($dnbBookdataQuery)"/>
-      <xsl:copy-of select="if($tmp//dc:title) then $tmp else doc('static_metadata.xml')//oai:dc[replace(dc:identifier[@xsi:type='tel:ISBN'][1], '-',  '')=$idno]"/>
+        <xsl:if test="$debug">
+            <xsl:message select="concat('debug message dnbBookdataQuery: ', $dnbBookdataQuery)"/>
+            <xsl:message select="concat('debug message idno: ', $idno)"/>
+            <xsl:message select="
+                    concat('debug message original title from static metadata: ', if (starts-with($idno, '8')) then
+                        doc('static_metadata.xml')//oai:dc[dc:identifier = $idno]//dc:title
+                    else
+                        '')"/>
+        </xsl:if>
+        <xsl:variable name="tmp" select="
+                if (starts-with($idno, '8')) then
+                    doc('static_metadata.xml')//oai:dc[dc:identifier = $idno]
+                else
+                    doc($dnbBookdataQuery)"/>
+        <xsl:copy-of select="
+                if ($tmp//dc:title) then
+                    $tmp
+                else
+                    doc('static_metadata.xml')//oai:dc[replace(dc:identifier[@xsi:type = 'tel:ISBN'][1], '-', '') = $idno]"/>
     </xsl:variable>
 
-    <xsl:variable name="autor"
-        select="replace(string-join($dnbBookdata//dc:creator[not(contains(., '[')) or matches(., '\[Verfasser\]')], ' ; '), ' *\[[^\]]*\]', '')"/>
-        <xsl:variable name="straight_autor" select="normalize-space(replace(hlu:reversedAuthors($autor), ',', ''))"/>
-    <xsl:variable name="translator"
-        select="replace(string-join($dnbBookdata//dc:creator[matches(., '\[Übersetzer\]')], ' ; '), ' *\[[^\]]*\]', '')"/>
-        <xsl:variable name="straight_translator" select="normalize-space(replace(hlu:reversedAuthors($translator), ',', ''))"/>
+    <xsl:variable name="autor" select="replace(string-join($dnbBookdata//dc:creator[not(contains(., '[')) or matches(., '\[Verfasser\]')], ' ; '), ' *\[[^\]]*\]', '')"/>
+    <xsl:variable name="straight_autor" select="normalize-space(replace(hlu:reversedAuthors($autor), ',', ''))"/>
+    <xsl:variable name="translator" select="replace(string-join($dnbBookdata//dc:creator[matches(., '\[Übersetzer\]')], ' ; '), ' *\[[^\]]*\]', '')"/>
+    <xsl:variable name="straight_translator" select="normalize-space(replace(hlu:reversedAuthors($translator), ',', ''))"/>
 
-    <xsl:variable name="herausgeber"
-        select="replace(string-join($dnbBookdata//dc:creator[matches(., '\[(Herausgeber|Hrsg.)\]')], ' ; '), ' *\[[^\]]*\]', '')"/>
-        <xsl:variable name="straight_herausgeber" select="normalize-space(replace(hlu:reversedAuthors($herausgeber), ',', ''))"/>
+    <xsl:variable name="herausgeber" select="replace(string-join($dnbBookdata//dc:creator[matches(., '\[(Herausgeber|Hrsg.)\]')], ' ; '), ' *\[[^\]]*\]', '')"/>
+    <xsl:variable name="straight_herausgeber" select="normalize-space(replace(hlu:reversedAuthors($herausgeber), ',', ''))"/>
 
     <xsl:variable name="ina"/>
     <xsl:variable name="_corpus"/>
@@ -82,11 +83,11 @@
 
     <xsl:variable name="titel">
         <xsl:variable name="title-with-subtitles">
-           <xsl:if test="$debug">
+            <xsl:if test="$debug">
                 <xsl:message select="concat('title: ', ($dnbBookdata//dc:title)[1])"/>
             </xsl:if>
             <xsl:choose>
-                <xsl:when test="contains(($dnbBookdata//dc:title)[1],':')">
+                <xsl:when test="contains(($dnbBookdata//dc:title)[1], ':')">
                     <xsl:choose>
                         <xsl:when test="matches(($dnbBookdata//dc:title)[1], '.*/.*:.*/')">
                             <xsl:value-of select="normalize-space(substring-before(($dnbBookdata//dc:title)[1], ':'))"/>
@@ -96,9 +97,9 @@
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:when>
-                 <xsl:when test="contains(($dnbBookdata//dc:title)[1],'/')">
+                <xsl:when test="contains(($dnbBookdata//dc:title)[1], '/')">
                     <xsl:value-of select="normalize-space(substring-before(($dnbBookdata//dc:title)[1], '/'))"/>
-                 </xsl:when>
+                </xsl:when>
                 <xsl:otherwise>
                     <xsl:value-of select="normalize-space(($dnbBookdata//dc:title)[1])"/>
                 </xsl:otherwise>
@@ -122,38 +123,40 @@
 
     <xsl:variable name="texttype" select="replace(($dnbBookdata//dc:subject[matches(., '^[A-Z] ')])[1], '^[A-Z] (.*)', '$1')"/>
 
-  <xsl:variable name="genretable">
-    <genres>
-      <genre keyRegex="(krimi|thriller)" genre="Roman: Kriminalroman"/>
-      <genre keyRegex="arzt.?roman" genre="Roman: Arztroman"/>
-      <genre keyRegex="(liebes.*roman|dunja|romanze)" genre="Roman: Liebesroman"/>
-      <genre keyRegex="science.?fiction" genre="Roman: Science-Fiction-Roman"/>
-      <genre keyRegex="horror" genre="Roman: Horrorroman"/>
-      <genre keyRegex="grusel" genre="Roman: Gruselroman"/>
-      <genre keyRegex="vampir.*roman" genre="Roman: Vampirroman"/>
-      <genre keyRegex="western" genre="Roman: Westernroman"/>
-      <genre keyRegex="fantasy" genre="Roman: Fantasyroman"/>
-      <genre keyRegex="mystery" genre="Roman: Mysteryroman"/>
-      <genre keyRegex="heimat.*roman" genre="Roman: Heimatroman"/>
-      <genre keyRegex="familien.*roman" genre="Roman: Familienroman"/>
-      <genre keyRegex="(sex|erotik|erotische|versaute|fick|sm).*roman" genre="Roman: Erotikroman"/>
-      <genre keyRegex="gay" genre="Roman: Gay-Roman"/>
-      <genre keyRegex="(sex|erotik|erotische|versaute|fick|sm)" genre="Erzählung: Erotikerzählung"/>
-      <genre keyRegex="historischer roman" genre="Roman: Historischer Roman"/>
-      <genre keyRegex="jugend" genre="Jugendliteratur: Jugendliteratur"/> <!-- wie in KJL -->
-      <genre keyRegex="(ein roman|der roman)" genre="Roman"/>
-      <genre keyRegex="erzählung" genre="Erzählung"/>
-      <genre keyRegex="novelle" genre="Novelle"/>
-      <genre keyRegex="anthologie" genre="Anthologie"/>
-      <genre keyRegex="kurzgeschichte" genre="Kurzgeschichte"/>
-      <genre keyRegex="geschichte" genre="Erzählung"/>
-      <genre keyRegex="heftroman" genre="Roman: Heftroman"/>
-      <genre keyRegex="roman" genre="Roman"/>
-      <genre keyRegex="." genre="Roman"/>
-    </genres>
-  </xsl:variable>
+    <xsl:variable name="genretable">
+        <genres>
+            <genre keyRegex="true.*crime" genre="Roman: True Crime"/>
+            <genre keyRegex="(krimi|thriller)" genre="Roman: Kriminalroman"/>
+            <genre keyRegex="arzt.?roman" genre="Roman: Arztroman"/>
+            <genre keyRegex="(liebes.*roman|dunja|romanze)" genre="Roman: Liebesroman"/>
+            <genre keyRegex="science.?fiction" genre="Roman: Science-Fiction-Roman"/>
+            <genre keyRegex="horror" genre="Roman: Horrorroman"/>
+            <genre keyRegex="grusel" genre="Roman: Gruselroman"/>
+            <genre keyRegex="vampir.*roman" genre="Roman: Vampirroman"/>
+            <genre keyRegex="western" genre="Roman: Westernroman"/>
+            <genre keyRegex="fantasy" genre="Roman: Fantasyroman"/>
+            <genre keyRegex="mystery" genre="Roman: Mysteryroman"/>
+            <genre keyRegex="heimat.*roman" genre="Roman: Heimatroman"/>
+            <genre keyRegex="familien.*roman" genre="Roman: Familienroman"/>
+            <genre keyRegex="(sex|erotik|erotische|versaute|fick|sm).*roman" genre="Roman: Erotikroman"/>
+            <genre keyRegex="gay" genre="Roman: Gay-Roman"/>
+            <genre keyRegex="(sex|erotik|erotische|versaute|fick|sm)" genre="Erzählung: Erotikerzählung"/>
+            <genre keyRegex="historischer roman" genre="Roman: Historischer Roman"/>
+            <genre keyRegex="jugend" genre="Jugendliteratur: Jugendliteratur"/>
+            <!-- wie in KJL -->
+            <genre keyRegex="(ein roman|der roman)" genre="Roman"/>
+            <genre keyRegex="erzählung" genre="Erzählung"/>
+            <genre keyRegex="novelle" genre="Novelle"/>
+            <genre keyRegex="anthologie" genre="Anthologie"/>
+            <genre keyRegex="kurzgeschichte" genre="Kurzgeschichte"/>
+            <genre keyRegex="geschichte" genre="Erzählung"/>
+            <genre keyRegex="heftroman" genre="Roman: Heftroman"/>
+            <genre keyRegex="roman" genre="Roman"/>
+            <genre keyRegex="." genre="Roman"/>
+        </genres>
+    </xsl:variable>
 
-  <xsl:variable name="textFullGenre" select="$genretable/genres/genre[matches($dnbBookdata, ./@keyRegex, 'i')][1]/@genre"/>
+    <xsl:variable name="textFullGenre" select="$genretable/genres/genre[matches($dnbBookdata, ./@keyRegex, 'i')][1]/@genre"/>
     <xsl:variable name="verlag">
         <xsl:choose>
             <xsl:when test="contains(($dnbBookdata//dc:publisher)[1], ':')">
@@ -169,13 +172,12 @@
         <xsl:value-of select="replace(($dnbBookdata//dc:date)[1], '.*?((19|20)[0-9][0-9]).*', '$1')"/>
     </xsl:variable>
 
-    <xsl:variable name="untertitel"
-        select="normalize-space(substring-after(substring-before(($dnbBookdata//dc:title)[1], '/'), ':'))"/>
+    <xsl:variable name="untertitel" select="normalize-space(substring-after(substring-before(($dnbBookdata//dc:title)[1], '/'), ':'))"/>
 
     <xsl:variable name="j" select="$erscheinungsjahr"/>
 
     <!-- for BOT+s: -->
-    <xsl:variable name="seiten" select="replace($dnbBookdata//dc:format,'S\.','')"/>
+    <xsl:variable name="seiten" select="replace($dnbBookdata//dc:format, 'S\.', '')"/>
 
     <!-- fuer BOT+b: -->
     <xsl:variable name="_b">
@@ -200,11 +202,10 @@
             <xsl:when test="$x">
                 <xsl:value-of select="concat('[', $x, ']')"/>
             </xsl:when>
-            <xsl:when
-                test="matches($untertitel, '([Rr]oman|[Ee]rzählung(en)?|[Aa]nthologie|[Gg]eschichte(n)?|[Nn]ovelle)')">
+            <xsl:when test="matches($untertitel, '([Rr]oman|[Ee]rzählung(en)?|[Aa]nthologie|[Gg]eschichte(n)?|[Nn]ovelle)')">
                 <xsl:value-of
                     select="concat('[', replace(replace($untertitel, '.*?(((^|\P{L})\p{L}+)?([Rr]oman|[Ee]rzählung(en)?|[Aa]nthologie|[Gg]eschichte(n)?|[Nn]ovelle)).*', '$1'), '\P{L}*(.+)', '$1'), ']')"
-                    />
+                />
             </xsl:when>
             <xsl:otherwise>
                 <xsl:value-of>Roman</xsl:value-of>
@@ -215,8 +216,11 @@
 
 
     <!-- fuer BOTd: -->
-    <xsl:variable name="dok"
-        select="concat((if(string-length($autor) &gt; 0) then concat($straight_autor, ': ') else ''), $titel, ', ', $txtart, ', (', $j, ')')"/>
+    <xsl:variable name="dok" select="
+            concat((if (string-length($autor) &gt; 0) then
+                concat($straight_autor, ': ')
+            else
+                ''), $titel, ', ', $txtart, ', (', $j, ')')"/>
 
     <!-- END variables derived from sru request to dnb archive -->
 
@@ -231,8 +235,7 @@
                 <xsl:analyze-string select="$titel" regex="\w+">
                     <xsl:matching-substring>
                         <xsl:choose>
-                            <xsl:when
-                                test="matches(.,'^[A-Z]') and not(matches(.,'^(Der|Die|Das|Des|Ein|Eine|Eines|Einmal|Von|Mit|Zu|Zur)$'))">
+                            <xsl:when test="matches(., '^[A-Z]') and not(matches(., '^(Der|Die|Das|Des|Ein|Eine|Eines|Einmal|Von|Mit|Zu|Zur)$'))">
                                 <!-- TODO: Fktnswoerter nachtragen -->
                                 <xsl:sequence select="."/>
                             </xsl:when>
@@ -241,29 +244,24 @@
                     </xsl:matching-substring>
                 </xsl:analyze-string>
             </xsl:variable>
-            <xsl:value-of
-                select="upper-case(substring(normalize-space(replace($helper,'\s+.+$','')),1,3))"/>
+            <xsl:value-of select="upper-case(substring(normalize-space(replace($helper, '\s+.+$', '')), 1, 3))"/>
             <!-- longest match of .+  -->
         </xsl:variable>
         <xsl:variable name="authorInitials">
             <xsl:choose>
-                <xsl:when test="contains($autor,';')">
-                    <xsl:variable name="lastname_aut1"
-                        select="upper-case(substring(normalize-space($autor),1,1))"/>
-                    <xsl:variable name="lastname_aut2"
-                        select="replace($autor, '.*?;.*?([A-Z]).*', '$1')"/>
-                    <xsl:value-of select="concat($lastname_aut1,  $lastname_aut2)"/>
+                <xsl:when test="contains($autor, ';')">
+                    <xsl:variable name="lastname_aut1" select="upper-case(substring(normalize-space($autor), 1, 1))"/>
+                    <xsl:variable name="lastname_aut2" select="replace($autor, '.*?;.*?([A-Z]).*', '$1')"/>
+                    <xsl:value-of select="concat($lastname_aut1, $lastname_aut2)"/>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:variable name="lastname_aut1"
-                        select="upper-case(substring(normalize-space(substring-before($autor,',')),1,1))"/>
-                    <xsl:variable name="firstname_aut1"
-                        select="upper-case(substring(normalize-space(substring-after($autor,',')),1,1))"/>
+                    <xsl:variable name="lastname_aut1" select="upper-case(substring(normalize-space(substring-before($autor, ',')), 1, 1))"/>
+                    <xsl:variable name="firstname_aut1" select="upper-case(substring(normalize-space(substring-after($autor, ',')), 1, 1))"/>
                     <xsl:value-of select="concat($lastname_aut1, $firstname_aut1)"/>
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
-        <xsl:value-of select="substring(replace(normalize-unicode(concat($authorInitials,$firstContentWordTitleInitial), 'NFKD'),'[^A-Z]',''),1,3)"/>
+        <xsl:value-of select="substring(replace(normalize-unicode(concat($authorInitials, $firstContentWordTitleInitial), 'NFKD'), '[^A-Z]', ''), 1, 3)"/>
     </xsl:variable>
 
 
@@ -280,16 +278,13 @@
         <xsl:value-of select="string-join($dnbBookdata//dc:identifier)"/>
     </xsl:variable>
 
-    <xsl:variable name="long-reference"
-        select="concat($sigle, ' ', $autor, ': ', $titel, '. ', $erscheinungsort, ': ', $verlag, ', ', $erscheinungsjahr)"/>
+    <xsl:variable name="long-reference" select="concat($sigle, ' ', $autor, ': ', $titel, '. ', $erscheinungsort, ': ', $verlag, ', ', $erscheinungsjahr)"/>
 
     <!-- NA -->
-    <xsl:variable name="bot_title"
-        select="concat($sigle, ' ', $autor, ': ', $titel, '. ', $erscheinungsort, ': ', $verlag, ', ', $erscheinungsjahr)"/>
+    <xsl:variable name="bot_title" select="concat($sigle, ' ', $autor, ': ', $titel, '. ', $erscheinungsort, ': ', $verlag, ', ', $erscheinungsjahr)"/>
     <!-- end NA -->
 
-    <xsl:variable name="short-reference"
-        select="concat($straight_autor, ': ', $titel, ' (',  $erscheinungsjahr, ')')"/>
+    <xsl:variable name="short-reference" select="concat($straight_autor, ': ', $titel, ' (', $erscheinungsjahr, ')')"/>
 
 
     <xsl:template match="/">
@@ -305,14 +300,14 @@
             <xsl:copy-of select="$dnbBookdata"/>
         </xsl:message>
         -->
-        
-                
-        <xsl:if  test="not($dnbBookdata//oai:dc)">
+
+
+        <xsl:if test="not($dnbBookdata//oai:dc)">
             <xsl:message terminate="yes" default-mode="text">ERROR: No metadata found for IDNO: <xsl:value-of select="$idno"/>
-            <xsl:text>&#10;Query was: </xsl:text>
-            <xsl:value-of disable-output-escaping="yes" select="replace($dnbBookdataQuery, '&amp;', '%38')"/>
-           <xsl:text>&#10;Retrieved response: </xsl:text>
-             <xsl:copy-of select="$dnbBookdata"/>
+                <xsl:text>&#10;Query was: </xsl:text>
+                <xsl:value-of disable-output-escaping="yes" select="replace($dnbBookdataQuery, '&amp;', '%38')"/>
+                <xsl:text>&#10;Retrieved response: </xsl:text>
+                <xsl:copy-of select="$dnbBookdata"/>
             </xsl:message>
         </xsl:if>
 
@@ -336,8 +331,12 @@
             <idsHeader TEIform="teiHeader" pattern="text" status="new" type="document" version="1.1">
                 <fileDesc>
                     <titleStmt>
-                        <dokumentSigle><xsl:value-of select="string-join(($corpus_sigle, $doc_sigle), '/')"/></dokumentSigle>
-                        <d.title><xsl:value-of select="$short-reference"/></d.title>
+                        <dokumentSigle>
+                            <xsl:value-of select="string-join(($corpus_sigle, $doc_sigle), '/')"/>
+                        </dokumentSigle>
+                        <d.title>
+                            <xsl:value-of select="$short-reference"/>
+                        </d.title>
                     </titleStmt>
                     <publicationStmt>
                         <distributor/>
@@ -359,9 +358,13 @@
                 <idsHeader TEIform="teiHeader" pattern="text" status="new" type="text" version="1.1">
                     <fileDesc>
                         <titleStmt>
-                            <textSigle><xsl:sequence select="$sigle"/></textSigle>
+                            <textSigle>
+                                <xsl:sequence select="$sigle"/>
+                            </textSigle>
                             <!-- NA -->
-                            <t.title assemblage="regular"><xsl:value-of select="$bot_title"/></t.title>
+                            <t.title assemblage="regular">
+                                <xsl:value-of select="$bot_title"/>
+                            </t.title>
                             <!-- end NA -->
                         </titleStmt>
                         <publicationStmt>
@@ -370,15 +373,23 @@
                             <xsl:for-each select="$dnbBookdata//dc:identifier">
                                 <xsl:variable name="type" select="substring-after(@xsi:type, ':')"/>
                                 <xsl:choose>
-                                    <xsl:when test="@xsi:type='tel:ISBN'">
-                                        <xsl:if test="matches(.,'(^([0-9]|-)+X?).*')">
-                                            <idno type="{$type}"><xsl:value-of select="replace(., '(([0-9]|-)+X?).*', '$1')"/></idno>
+                                    <xsl:when test="@xsi:type = 'tel:ISBN'">
+                                        <xsl:if test="matches(., '(^([0-9]|-)+X?).*')">
+                                            <idno type="{$type}">
+                                                <xsl:value-of select="replace(., '(([0-9]|-)+X?).*', '$1')"/>
+                                            </idno>
                                         </xsl:if>
                                     </xsl:when>
-                                    <xsl:when test="$type='URL' and contains(., '/urn:nbn:de')">
-                                        <idno rend="URN;{tokenize(., '/')[last()]}" type="URL"><xsl:value-of select="."/></idno>
+                                    <xsl:when test="$type = 'URL' and contains(., '/urn:nbn:de')">
+                                        <idno rend="URN;{tokenize(., '/')[last()]}" type="URL">
+                                            <xsl:value-of select="."/>
+                                        </idno>
                                     </xsl:when>
-                                    <xsl:otherwise><idno type="{$type}"><xsl:value-of select="."/></idno></xsl:otherwise>
+                                    <xsl:otherwise>
+                                        <idno type="{$type}">
+                                            <xsl:value-of select="."/>
+                                        </idno>
+                                    </xsl:otherwise>
                                 </xsl:choose>
                             </xsl:for-each>
                             <availability region="world" status="unknown">QAO-NC</availability>
@@ -387,14 +398,24 @@
                         <sourceDesc>
                             <biblStruct>
                                 <monogr>
-                                    <h.title type="main"><xsl:value-of select="$titel"/></h.title>
-                                    <h.title type="sub"><xsl:value-of select="$untertitel"/></h.title>
-                                    <h.author><xsl:value-of select="$autor"/></h.author>
+                                    <h.title type="main">
+                                        <xsl:value-of select="$titel"/>
+                                    </h.title>
+                                    <h.title type="sub">
+                                        <xsl:value-of select="$untertitel"/>
+                                    </h.title>
+                                    <h.author>
+                                        <xsl:value-of select="$autor"/>
+                                    </h.author>
                                     <xsl:if test="$translator">
-                                        <editor role="translator"><xsl:value-of select="$translator"/></editor>
+                                        <editor role="translator">
+                                            <xsl:value-of select="$translator"/>
+                                        </editor>
                                     </xsl:if>
                                     <xsl:if test="$herausgeber">
-                                        <editor role="editor"><xsl:value-of select="$herausgeber"/></editor>
+                                        <editor role="editor">
+                                            <xsl:value-of select="$herausgeber"/>
+                                        </editor>
                                     </xsl:if>
                                     <edition>
                                         <further/>
@@ -402,11 +423,17 @@
                                         <appearance>EPUB-Datei</appearance>
                                     </edition>
                                     <imprint>
-                                        <publisher><xsl:value-of select="$verlag"/></publisher>
-                                        <pubDate type="year"><xsl:value-of select="$j"/></pubDate>
+                                        <publisher>
+                                            <xsl:value-of select="$verlag"/>
+                                        </publisher>
+                                        <pubDate type="year">
+                                            <xsl:value-of select="$j"/>
+                                        </pubDate>
                                         <pubDate type="month"/>
                                         <pubDate type="day"/>
-                                        <pubPlace key="{$erscheinungsland}"><xsl:value-of select="$erscheinungsort"/></pubPlace>
+                                        <pubPlace key="{$erscheinungsland}">
+                                            <xsl:value-of select="$erscheinungsort"/>
+                                        </pubPlace>
                                     </imprint>
                                     <biblScope type="subsume"/>
                                     <biblScope type="pp"/>
@@ -422,10 +449,14 @@
                                     </xsl:element>
                                 </xsl:if>
                             </biblStruct>
-			    <!-- NA -->
-                            <reference assemblage="regular" type="complete"><xsl:value-of select="$long-reference"/></reference>
-                            <reference assemblage="regular" type="short"><xsl:value-of select="$short-reference"/></reference>
-			    <!-- END NA -->
+                            <!-- NA -->
+                            <reference assemblage="regular" type="complete">
+                                <xsl:value-of select="$long-reference"/>
+                            </reference>
+                            <reference assemblage="regular" type="short">
+                                <xsl:value-of select="$short-reference"/>
+                            </reference>
+                            <!-- END NA -->
                         </sourceDesc>
                     </fileDesc>
                     <profileDesc>
@@ -440,14 +471,18 @@
                         <!-- END HL -->
                         <textClass/>
                         <textDesc>
-                            <textType><xsl:value-of select="$textFullGenre"/></textType>
-                            <textTypeRef><xsl:value-of select="replace($textFullGenre, '.*: *', '')"/></textTypeRef>
+                            <textType>
+                                <xsl:value-of select="$textFullGenre"/>
+                            </textType>
+                            <textTypeRef>
+                                <xsl:value-of select="replace($textFullGenre, '.*: *', '')"/>
+                            </textTypeRef>
                             <textDomain/>
                         </textDesc>
                     </profileDesc>
                 </idsHeader>
                 <text>
-                   <body>
+                    <body>
                         <!-- Call the template for each idref the spine -->
                         <xsl:apply-templates select="//opf:spine/opf:itemref" mode="collect"/>
                     </body>
@@ -455,26 +490,33 @@
             </idsText>
         </idsDoc>
     </xsl:template>
-    
+
     <!-- BEGIN HL -->
     <xsl:template name="creation_temp">
         <xsl:param name="j"/>
         <creation>
-            <creatDate><xsl:value-of select="$j"/></creatDate>
+            <creatDate>
+                <xsl:value-of select="$j"/>
+            </creatDate>
         </creation>
     </xsl:template>
     <!-- END HL -->
 
     <xsl:template match="opf:itemref" mode="collect">
         <xsl:variable name="id" select="@idref"/>
-        <xsl:variable name="item"  select="//opf:manifest/opf:item[@id=$id and matches(@href, '\.x?html?$') and not(matches(@href, '(cover|toc|copyright|feedback|inhalt|nav|titlepage).*'))]"/>
+        <xsl:variable name="item" select="//opf:manifest/opf:item[@id = $id and matches(@href, '\.x?html?$') and not(matches(@href, '(cover|toc|copyright|feedback|inhalt|nav|titlepage).*'))]"/>
 
         <xsl:choose>
-            <xsl:when test = "$item">
+            <xsl:when test="$item">
                 <xsl:variable name="href" select="$item/@href"/>
                 <xsl:if test="$debug">
                     <xsl:message>
-                        <xsl:text>converting: </xsl:text><xsl:value-of select="$id"/><xsl:text> </xsl:text><xsl:value-of select="$href"/><xsl:text> </xsl:text><xsl:value-of select="$idno"/>
+                        <xsl:text>converting: </xsl:text>
+                        <xsl:value-of select="$id"/>
+                        <xsl:text> </xsl:text>
+                        <xsl:value-of select="$href"/>
+                        <xsl:text> </xsl:text>
+                        <xsl:value-of select="$idno"/>
                     </xsl:message>
                 </xsl:if>
                 <xsl:apply-templates select="doc(resolve-uri($href, base-uri()))/xhtml:html/xhtml:body"/>
@@ -482,12 +524,15 @@
             <xsl:otherwise>
                 <xsl:if test="$debug">
                     <xsl:message>
-                        <xsl:text>skipping: </xsl:text><xsl:value-of select="$id"/><xsl:text> </xsl:text><xsl:value-of select="$idno"/>
+                        <xsl:text>skipping: </xsl:text>
+                        <xsl:value-of select="$id"/>
+                        <xsl:text> </xsl:text>
+                        <xsl:value-of select="$idno"/>
                     </xsl:message>
                 </xsl:if>
             </xsl:otherwise>
         </xsl:choose>
-        </xsl:template>
+    </xsl:template>
 
     <xsl:template match="xhtml:body">
         <div type="chapter">
@@ -513,7 +558,7 @@
         </head>
     </xsl:template>
 
-    <xsl:template match="xhtml:h2|xhtml:h3|xhtml:h4|xhtml:h5|xhtml:h6">
+    <xsl:template match="xhtml:h2 | xhtml:h3 | xhtml:h4 | xhtml:h5 | xhtml:h6">
         <head type="sub">
             <xsl:apply-templates/>
         </head>
@@ -536,26 +581,26 @@
         <xsl:apply-templates/>
     </xsl:template>
 
-    <xsl:template match="xhtml:b|xhtml:span[@class='b']|xhtml:strong">
+    <xsl:template match="xhtml:b | xhtml:span[@class = 'b'] | xhtml:strong">
         <hi rend="bold">
             <xsl:apply-templates/>
         </hi>
     </xsl:template>
 
-     <xsl:template match="xhtml:i|xhtml:span[@class='i' or @class='it' or @class='Italic']|xhtml:span[@style='font-style:italic' or @style='font-style:italic;']">
+    <xsl:template match="xhtml:i | xhtml:span[@class = 'i' or @class = 'it' or @class = 'Italic'] | xhtml:span[@style = 'font-style:italic' or @style = 'font-style:italic;']">
         <hi rend="italic">
             <xsl:apply-templates/>
         </hi>
     </xsl:template>
 
 
-    <xsl:template match="xhtml:sub|xhtml:span[@class='sub']">
+    <xsl:template match="xhtml:sub | xhtml:span[@class = 'sub']">
         <hi rend="sub">
             <xsl:apply-templates/>
         </hi>
     </xsl:template>
 
-    <xsl:template match="xhtml:sup|xhtml:span[@class='sup']">
+    <xsl:template match="xhtml:sup | xhtml:span[@class = 'sup']">
         <hi rend="sup">
             <xsl:apply-templates/>
         </hi>
@@ -563,7 +608,7 @@
 
     <xsl:template match="xhtml:div[not(normalize-space(replace(., '&#160;', ' ')))]" priority="1.0"/>
 
-    <xsl:template match="xhtml:body/xhtml:div[./xhtml:h1|./xhtml:h2|./xhtml:h3]" priority="1.0">
+    <xsl:template match="xhtml:body/xhtml:div[./xhtml:h1 | ./xhtml:h2 | ./xhtml:h3]" priority="1.0">
         <xsl:apply-templates/>
     </xsl:template>
     <xsl:template match="xhtml:div/xhtml:div">
@@ -572,21 +617,21 @@
         </p>
     </xsl:template>
 
-    <xsl:template match="xhtml:body/xhtml:div[(descendant::xhtml:p|descendant::xhtml:div)]">
+    <xsl:template match="xhtml:body/xhtml:div[(descendant::xhtml:p | descendant::xhtml:div)]">
         <div type="section">
             <xsl:apply-templates/>
         </div>
     </xsl:template>
 
-     <xsl:template match="xhtml:body/xhtml:div[not(descendant::xhtml:p|descendant::xhtml:div)]">
-         <div type="section">
+    <xsl:template match="xhtml:body/xhtml:div[not(descendant::xhtml:p | descendant::xhtml:div)]">
+        <div type="section">
             <p>
                 <xsl:apply-templates/>
             </p>
         </div>
     </xsl:template>
 
-    <xsl:template match="xhtml:p[not(descendant::xhtml:p|descendant::xhtml:div)]">
+    <xsl:template match="xhtml:p[not(descendant::xhtml:p | descendant::xhtml:div)]">
         <xsl:if test="normalize-space(.)">
             <p>
                 <xsl:apply-templates/>
@@ -594,7 +639,7 @@
         </xsl:if>
     </xsl:template>
 
-    <xsl:template match="xhtml:p[descendant::xhtml:p|descendant::xhtml:div]">
+    <xsl:template match="xhtml:p[descendant::xhtml:p | descendant::xhtml:div]">
         <xsl:if test="normalize-space(.)">
             <div type="section">
                 <xsl:apply-templates/>
@@ -615,7 +660,7 @@
     <xsl:template match="xhtml:li">
         <item>
             <xsl:apply-templates/>
-       </item>
+        </item>
     </xsl:template>
     <xsl:template match="xhtml:nav">
         <!-- <gap reason="toc"/>  -->
@@ -636,28 +681,30 @@
         <xsl:if test="normalize-space(.)">
             <p>
                 <ref target="{@href}">
-                    <xsl:apply-templates />
+                    <xsl:apply-templates/>
                 </ref>
             </p>
         </xsl:if>
     </xsl:template>
 
-     <xsl:template match="xhtml:body/xhtml:span">
+    <xsl:template match="xhtml:body/xhtml:span">
         <xsl:if test="$debug">
-          <xsl:message>
-                <xsl:text>unhandled span element: </xsl:text><xsl:value-of select="concat(name(), ' ', string-join(./@*[normalize-space(.) != '']/concat(name(), ':', ., ' '), '_'))"/>
+            <xsl:message>
+                <xsl:text>unhandled span element: </xsl:text>
+                <xsl:value-of select="concat(name(), ' ', string-join(./@*[normalize-space(.) != '']/concat(name(), ':', ., ' '), '_'))"/>
             </xsl:message>
         </xsl:if>
         <div type="section">
             <p>
-              <xsl:value-of select="."/>
+                <xsl:value-of select="."/>
             </p>
         </div>
     </xsl:template>
     <xsl:template match="xhtml:span">
         <xsl:if test="$debug">
             <xsl:message>
-                <xsl:text>unhandled span element: </xsl:text><xsl:value-of select="concat(name(), ' ', string-join(./@*[normalize-space(.) != '']/concat(name(), ':', ., ' '), '_'))"/>
+                <xsl:text>unhandled span element: </xsl:text>
+                <xsl:value-of select="concat(name(), ' ', string-join(./@*[normalize-space(.) != '']/concat(name(), ':', ., ' '), '_'))"/>
             </xsl:message>
         </xsl:if>
         <xsl:value-of select="."/>
@@ -665,101 +712,107 @@
     <xsl:template match="xhtml:a">
         <xsl:if test="normalize-space(.)">
             <ref target="{@href}">
-                <xsl:apply-templates />
+                <xsl:apply-templates/>
             </ref>
         </xsl:if>
     </xsl:template>
 
     <xsl:template match="xhtml:br">
-        <lb/><xsl:text>&#10;</xsl:text>
+        <lb/>
+        <xsl:text>&#10;</xsl:text>
     </xsl:template>
 
     <xsl:template match="xhtml:*">
         <xsl:if test="$debug">
             <xsl:message>
-                <xsl:text>unhandled element: </xsl:text><xsl:value-of select="concat(name(), ' ', string-join(./@*[normalize-space(.) != '']/concat(name(), ':', ., ' '), '_'))"/>
+                <xsl:text>unhandled element: </xsl:text>
+                <xsl:value-of select="concat(name(), ' ', string-join(./@*[normalize-space(.) != '']/concat(name(), ':', ., ' '), '_'))"/>
             </xsl:message>
         </xsl:if>
         <xsl:choose>
-            <xsl:when test="descendant::xhtml:div|descendant::xhtml:p|parent::xhtml:body">
+            <xsl:when test="descendant::xhtml:div | descendant::xhtml:p | parent::xhtml:body">
                 <div type="section">
                     <xsl:apply-templates/>
                 </div>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:apply-templates select="./*|node()"/>
+                <xsl:apply-templates select="./* | node()"/>
             </xsl:otherwise>
         </xsl:choose>
         <xsl:apply-templates/>
     </xsl:template>
 
     <xsl:function name="ids:reversedAuthors">
-        <xsl:param name="s" />
-        <xsl:value-of
-            select="
+        <xsl:param name="s"/>
+        <xsl:value-of select="
                 if (matches($s, ';')) then
                     concat(ids:reversedAuthors(substring-before($s, ' ; ')), ' ; ', ids:reversedAuthors(substring-after($s, ' ; ')))
                 else
-                    replace($s, '(.+) (.+)', '$2, $1')"
-            />
+                    replace($s, '(.+) (.+)', '$2, $1')"/>
     </xsl:function>
 
     <xsl:function name="hlu:reversedAuthors">
         <xsl:param name="s"/>
-        <xsl:value-of
-            select="if (matches($s, ';')) then concat(ids:reversedAuthors(substring-before($s, ' ; ')), ' ; ', ids:reversedAuthors(substring-after($s, ' ; '))) else replace($s, '(.+),(.+)', '$2, $1')"
-            />
+        <xsl:value-of select="
+                if (matches($s, ';')) then
+                    concat(ids:reversedAuthors(substring-before($s, ' ; ')), ' ; ', ids:reversedAuthors(substring-after($s, ' ; ')))
+                else
+                    replace($s, '(.+),(.+)', '$2, $1')"/>
     </xsl:function>
 
-  <xsl:variable name="city-country-map" as="map(xs:string, xs:string)">
-    <xsl:map>
-      <xsl:map-entry key="'Axams'" select="'AT'"/>
-      <xsl:map-entry key="'Vienna'" select="'AT'"/>
-      <xsl:map-entry key="'Klagenfurt'" select="'AT'"/>
-      <xsl:map-entry key="'Graz'" select="'AT'"/>
-      <xsl:map-entry key="'Innsbruck'" select="'AT'"/>
-      <xsl:map-entry key="'Salzburg'" select="'AT'"/>
-      <xsl:map-entry key="'Bern'" select="'CH'"/>
-      <xsl:map-entry key="'Biel/Bienne'" select="'CH'"/>
-      <xsl:map-entry key="'Zurich'" select="'CH'"/>
-      <xsl:map-entry key="'Basel'" select="'CH'"/>
-      <xsl:map-entry key="'Geneva'" select="'CH'"/>
-      <xsl:map-entry key="'Lucerne'" select="'CH'"/>
-      <xsl:map-entry key="'Lausanne'" select="'CH'"/>
-      <xsl:map-entry key="'Winterthur'" select="'CH'"/>
-      <xsl:map-entry key="'St. Gallen'" select="'CH'"/>
-      <xsl:map-entry key="'Interlaken'" select="'CH'"/>
-      <xsl:map-entry key="'Brussels'" select="'BE'"/>
-      <xsl:map-entry key="'Antwerp'" select="'BE'"/>
-      <xsl:map-entry key="'Ghent'" select="'BE'"/>
-      <xsl:map-entry key="'Bruges'" select="'BE'"/>
-      <xsl:map-entry key="'Leuven'" select="'BE'"/>
-      <xsl:map-entry key="'Liege'" select="'BE'"/>
-      <xsl:map-entry key="'Charleroi'" select="'BE'"/>
-      <xsl:map-entry key="'Namur'" select="'BE'"/>
-      <xsl:map-entry key="'Mons'" select="'BE'"/>
-      <xsl:map-entry key="'Bangkok'" select="'TH'"/>
-      <xsl:map-entry key="'Copenhagen'" select="'DK'"/>
-      <xsl:map-entry key="'colatina'" select="'BR'"/>
-      <xsl:map-entry key="'Oakland Park'" select="'US'"/>
-      <xsl:map-entry key="'Istanbul'" select="'TR'"/>
-      <xsl:map-entry key="'Luxemburg'" select="'LU'"/>
-      <xsl:map-entry key="'Palma de Mallorca'" select="'ES'"/>
-      <xsl:map-entry key="'Swakopmund'" select="'NA'"/>
-      <xsl:map-entry key="'Victoria'" select="'CA'"/>
-      <xsl:map-entry key="'Wien'" select="'AT'"/>
-      <xsl:map-entry key="'Windhoek'" select="'NA'"/>
-      <xsl:map-entry key="'Zuerich'" select="'CH'"/>
-      <xsl:map-entry key="'Zürich'" select="'CH'"/>
-      <xsl:map-entry key="'Zug'" select="'CH'"/>
-      <xsl:map-entry key="'ZÜRICH'" select="'CH'"/>
-    </xsl:map>
+    <xsl:variable name="city-country-map" as="map(xs:string, xs:string)">
+        <xsl:map>
+            <xsl:map-entry key="'Axams'" select="'AT'"/>
+            <xsl:map-entry key="'Vienna'" select="'AT'"/>
+            <xsl:map-entry key="'Klagenfurt'" select="'AT'"/>
+            <xsl:map-entry key="'Graz'" select="'AT'"/>
+            <xsl:map-entry key="'Innsbruck'" select="'AT'"/>
+            <xsl:map-entry key="'Salzburg'" select="'AT'"/>
+            <xsl:map-entry key="'Bern'" select="'CH'"/>
+            <xsl:map-entry key="'Biel/Bienne'" select="'CH'"/>
+            <xsl:map-entry key="'Zurich'" select="'CH'"/>
+            <xsl:map-entry key="'Basel'" select="'CH'"/>
+            <xsl:map-entry key="'Geneva'" select="'CH'"/>
+            <xsl:map-entry key="'Lucerne'" select="'CH'"/>
+            <xsl:map-entry key="'Lausanne'" select="'CH'"/>
+            <xsl:map-entry key="'Winterthur'" select="'CH'"/>
+            <xsl:map-entry key="'St. Gallen'" select="'CH'"/>
+            <xsl:map-entry key="'Interlaken'" select="'CH'"/>
+            <xsl:map-entry key="'Brussels'" select="'BE'"/>
+            <xsl:map-entry key="'Antwerp'" select="'BE'"/>
+            <xsl:map-entry key="'Ghent'" select="'BE'"/>
+            <xsl:map-entry key="'Bruges'" select="'BE'"/>
+            <xsl:map-entry key="'Leuven'" select="'BE'"/>
+            <xsl:map-entry key="'Liege'" select="'BE'"/>
+            <xsl:map-entry key="'Charleroi'" select="'BE'"/>
+            <xsl:map-entry key="'Namur'" select="'BE'"/>
+            <xsl:map-entry key="'Mons'" select="'BE'"/>
+            <xsl:map-entry key="'Bangkok'" select="'TH'"/>
+            <xsl:map-entry key="'Copenhagen'" select="'DK'"/>
+            <xsl:map-entry key="'colatina'" select="'BR'"/>
+            <xsl:map-entry key="'Oakland Park'" select="'US'"/>
+            <xsl:map-entry key="'Istanbul'" select="'TR'"/>
+            <xsl:map-entry key="'Luxemburg'" select="'LU'"/>
+            <xsl:map-entry key="'Palma de Mallorca'" select="'ES'"/>
+            <xsl:map-entry key="'Swakopmund'" select="'NA'"/>
+            <xsl:map-entry key="'Victoria'" select="'CA'"/>
+            <xsl:map-entry key="'Wien'" select="'AT'"/>
+            <xsl:map-entry key="'Windhoek'" select="'NA'"/>
+            <xsl:map-entry key="'Zuerich'" select="'CH'"/>
+            <xsl:map-entry key="'Zürich'" select="'CH'"/>
+            <xsl:map-entry key="'Zug'" select="'CH'"/>
+            <xsl:map-entry key="'ZÜRICH'" select="'CH'"/>
+        </xsl:map>
 
-  </xsl:variable>
+    </xsl:variable>
 
-  <!-- Define the function -->
-  <xsl:function name="ids:country-city" as="xs:string">
-    <xsl:param name="city" as="xs:string"/>
-    <xsl:sequence select="if (map:contains($city-country-map, $city)) then map:get($city-country-map, $city) else 'DE'"/>
-  </xsl:function>
+    <!-- Define the function -->
+    <xsl:function name="ids:country-city" as="xs:string">
+        <xsl:param name="city" as="xs:string"/>
+        <xsl:sequence select="
+                if (map:contains($city-country-map, $city)) then
+                    map:get($city-country-map, $city)
+                else
+                    'DE'"/>
+    </xsl:function>
 </xsl:stylesheet>
