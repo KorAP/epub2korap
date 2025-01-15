@@ -283,8 +283,14 @@
     <xsl:variable name="long-reference"
         select="concat($sigle, ' ', $autor, ': ', $titel, '. ', $erscheinungsort, ': ', $verlag, ', ', $erscheinungsjahr)"/>
 
+    <!-- NA -->
+    <xsl:variable name="bot_title"
+        select="concat($sigle, ' ', $autor, ': ', $titel, '. ', $erscheinungsort, ': ', $verlag, ', ', $erscheinungsjahr)"/>
+    <!-- end NA -->
+
     <xsl:variable name="short-reference"
         select="concat($straight_autor, ': ', $titel, ' (',  $erscheinungsjahr, ')')"/>
+
 
     <xsl:template match="/">
         <!-- for debugging purposes 
@@ -354,7 +360,9 @@
                     <fileDesc>
                         <titleStmt>
                             <textSigle><xsl:sequence select="$sigle"/></textSigle>
-                            <t.title assemblage="regular"><xsl:value-of select="$long-reference"/></t.title>
+                            <!-- NA -->
+                            <t.title assemblage="regular"><xsl:value-of select="$bot_title"/></t.title>
+                            <!-- end NA -->
                         </titleStmt>
                         <publicationStmt>
                             <distributor/>
@@ -414,7 +422,10 @@
                                     </xsl:element>
                                 </xsl:if>
                             </biblStruct>
-                            <reference assemblage="regular" type="complete"><xsl:value-of select="concat($sigle, ' ', $autor, ': ', $titel, '. ', $erscheinungsort, ': ', $verlag, ', ', $erscheinungsjahr)"/></reference>
+			    <!-- NA -->
+                            <reference assemblage="regular" type="complete"><xsl:value-of select="$long-reference"/></reference>
+                            <reference assemblage="regular" type="short"><xsl:value-of select="$short-reference"/></reference>
+			    <!-- END NA -->
                         </sourceDesc>
                     </fileDesc>
                     <profileDesc>
