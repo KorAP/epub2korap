@@ -8,6 +8,7 @@
     <xsl:strip-space elements="*"/>
 
     <xsl:param name="debug"/>
+    <!--xsl:variable name="debug" select="true()"/-->
 
     <xsl:variable name="ev"/>
     <xsl:variable name="x"/>
@@ -30,6 +31,13 @@
     <xsl:variable name="dnbBookdataQuery" as="xs:string">
         <xsl:value-of disable-output-escaping="yes"
             select="concat('https://services.dnb.de/sru/dnb?version=1.1&amp;operation=searchRetrieve&amp;query=', $idno_type, '%3D', $idno, '&amp;recordSchema=oai_dc')"/>
+<!--
+	    <xsl:if test="$debug">
+		<xsl:message select="concat('debug: Printing idno, just in case ', $idno)"/>
+	    </xsl:if>
+        <xsl:value-of disable-output-escaping="yes" select="concat('https://services.dnb.de/sru/dnb?version=1.1&amp;operation=searchRetrieve&amp;query=', $idno_type, '%3D', $idno, '&amp;recordSchema=oai_dc')"/>
+>>>>>>> Stashed changes
+-->
     </xsl:variable>
     <xsl:variable name="dnbBookdata">
         <xsl:if test="$debug">
@@ -286,9 +294,10 @@
 
     <xsl:variable name="short-reference" select="concat($straight_autor, ': ', $titel, ' (', $erscheinungsjahr, ')')"/>
 
+    <xsl:variable name="dtitle" select="concat($straight_autor, ': ', $titel, ' (', $erscheinungsjahr, ')')"/>
 
     <xsl:template match="/">
-        <!-- for debugging purposes 
+        <!-- for debugging purposes  -->
         <xsl:message select="concat('uri: ', base-uri())"/>
         <xsl:message select="concat('idno: ', $idno)"/>
 
@@ -299,8 +308,7 @@
         <xsl:message>
             <xsl:copy-of select="$dnbBookdata"/>
         </xsl:message>
-        -->
-
+<!--        -->
 
         <xsl:if test="not($dnbBookdata//oai:dc)">
             <xsl:message terminate="yes" default-mode="text">ERROR: No metadata found for IDNO: <xsl:value-of select="$idno"/>
@@ -335,7 +343,9 @@
                             <xsl:value-of select="string-join(($corpus_sigle, $doc_sigle), '/')"/>
                         </dokumentSigle>
                         <d.title>
-                            <xsl:value-of select="$short-reference"/>
+			<!-- NA: use separate dtitle variable, to have independent control over $short-reference -->
+                            <xsl:value-of select="$dtitle"/>
+			<!-- END NA -->
                         </d.title>
                     </titleStmt>
                     <publicationStmt>
