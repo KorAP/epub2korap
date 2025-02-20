@@ -27,7 +27,7 @@
 
     <xsl:template match="div[not(normalize-space())]" priority="1.0"/>
 
-    <xsl:template match="p[descendant::div|descendant::p]" priority="0.9">
+    <xsl:template match="p[descendant::div|descendant::p and not(ancestor::item)]" priority="0.9">
         <div type="section">
             <xsl:apply-templates/>
         </div>
@@ -51,6 +51,12 @@
         </p>
     </xsl:template>
 
-    <xsl:template match="p[normalize-space(.) = '&#160;']"/>
+    <xsl:template match="div[ancestor::item]">
+        <p>
+            <xsl:apply-templates/>
+        </p>
+    </xsl:template>
+
+  <xsl:template match="p[normalize-space(.) = '&#160;']"/>
 
 </xsl:stylesheet>

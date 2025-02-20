@@ -24,6 +24,14 @@
         </p>
     </xsl:template>
 
+    <xsl:template match="p/div">
+        <xsl:apply-templates/>
+    </xsl:template>
+
+    <xsl:template match="p/p">
+        <xsl:apply-templates/>
+    </xsl:template>
+
     <xsl:template match="hi[local-name(preceding-sibling::*[1]) = 'hi' and @rend = preceding-sibling::hi[1]/@rend]"/>
 
     <xsl:template match="hi[following-sibling::hi and not(preceding-sibling::hi)]">
