@@ -749,7 +749,6 @@
                 <xsl:apply-templates select="./* | node()"/>
             </xsl:otherwise>
         </xsl:choose>
-        <xsl:apply-templates/>
     </xsl:template>
 
     <xsl:function name="ids:reversedAuthors">
